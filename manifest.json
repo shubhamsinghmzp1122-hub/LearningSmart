@@ -1,0 +1,17 @@
+{
+  "name": "Learning Smart",
+  "short_name": "Learning Smart",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F7F9F9",
+  "theme_color": "#FF6B6B",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
