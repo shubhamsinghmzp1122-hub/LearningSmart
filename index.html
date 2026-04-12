@@ -295,7 +295,7 @@ h3 { font-size: clamp(1.3rem, 4vw, 1.8rem); }
             <div style="width: 40px;"></div>
         </div>
         
-        <div class="save-score-box" style="border-color:var(--accent2); flex:1; display:flex; flex-direction:column; align-items:center; padding: 10px; overflow: hidden;">
+        <div class="save-score-box" style="border-color:var(--accent2); flex:1; display:flex; flex-direction:column; align-items:center; padding: 10px; overflow: hidden; width: 100%;">
             
             <div id="chat-container" style="width:100%; text-align:left; flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:15px; padding: 5px; margin-bottom: 10px;">
                 
@@ -303,15 +303,8 @@ h3 { font-size: clamp(1.3rem, 4vw, 1.8rem); }
                     <b style="color:#8e24aa; font-size:1rem;">AI Robot:</b><br> 
                     <span style="font-size:1.2rem; color:#4a148c;">Hello Pari & Jiya! Ask me anything by speaking or typing! ✨</span>
                 </div>
-
-                <div id="user-chat" style="display:none; background:#e1f5fe; padding:15px; border-radius:20px 20px 0 20px; border:2px solid #81d4fa; align-self:flex-end; max-width:90%;">
-                    <b style="color:#0288d1; font-size:1rem;">You:</b><br> <span id="user-text-span" style="font-size:1.2rem; color:#01579b;"></span>
-                </div>
                 
-                <div id="ai-chat" style="display:none; background:#f3e5f5; padding:15px; border-radius:20px 20px 20px 0; border:2px solid #ce93d8; align-self:flex-start; max-width:90%;">
-                    <b style="color:#8e24aa; font-size:1rem;">AI Robot:</b><br> <span id="ai-text-span" style="font-size:1.2rem; color:#4a148c;"></span>
                 </div>
-            </div>
 
             <div style="display:flex; width:100%; gap:8px; align-items:center; background: white; padding: 8px; border-radius: 25px; border: 3px solid var(--accent1); box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
                 <button id="mic-btn" class="btn-icon" style="width:45px; height:45px; font-size:1.5rem; background:var(--accent1); flex-shrink:0;" onclick="toggleMic()">🎙️</button>
@@ -327,8 +320,8 @@ h3 { font-size: clamp(1.3rem, 4vw, 1.8rem); }
             <h2 style="color: var(--primary); margin-bottom: 10px;">Install App! 📱</h2>
             <p style="font-size: 1.1rem; color: var(--text); line-height: 1.5; margin-bottom: 20px;">
                 To install this learning app ad-free:<br><br>
-                1. Click the <b>3-dots menu (⋮)</b> in Chrome.<br>
-                2. Select <b>"Add to Home screen"</b>.<br>
+                1. Click the <b>3-dots menu (⋮)</b> in Chrome (top-right).<br>
+                2. Select <b>"Add to Home screen"</b> or <b>"Install app"</b>.<br>
                 3. Enjoy learning safely! 🎈
             </p>
             <button onclick="document.getElementById('installModal').style.display='none';" class="btn primary" style="margin: 0;">Okay!</button>
@@ -470,8 +463,8 @@ let lastSpokenText="";function repeatQuestionVoice(){if(lastSpokenText)speakText
 function showScreen(id){stopVoice();document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
 function goHome(){showScreen('home')}
 
-// ⭐ JARVIS AI: Voice & Text Logic ⭐
-const GEMINI_API_KEY="AIzaSyCor3y7MXZHUdbgllhsyhvxSiVUE1l4kwg";
+/* ⭐ JARVIS AI: Voice + Keyboard Chat Logic ⭐ */
+const GEMINI_API_KEY="AIzaSyCor3y7MXZHUdbgllhsyhvxSiVUE1l4kwg"; 
 let isListening=false;const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;let recognition;
 if(SpeechRecognition){
     recognition=new SpeechRecognition();recognition.lang='hi-IN';recognition.interimResults=false;
@@ -479,20 +472,49 @@ if(SpeechRecognition){
     recognition.onerror=()=>{isListening=false;resetMicUI();document.getElementById('mic-status').innerText="Oops! Didn't hear clearly. 😕"};
     recognition.onend=()=>{if(isListening){isListening=false;resetMicUI()}}
 }
-function openAIHelper(){document.getElementById('user-chat').style.display='none';document.getElementById('ai-chat').style.display='none';document.getElementById('ai-text-input').value='';resetMicUI();showScreen('ai-helper-screen')}
+function openAIHelper(){document.getElementById('ai-text-input').value='';resetMicUI();showScreen('ai-helper-screen')}
 function toggleMic(){if(!recognition)return alert("Mic not supported. Try Chrome! 🎙️❌");if(isListening){recognition.stop();return}try{recognition.start();isListening=true;document.getElementById('mic-status').innerText="Listening... Speak now! 👂";const m=document.getElementById('mic-btn');m.style.transform="scale(1.2)";m.style.background="var(--danger)";m.style.color="white";m.style.boxShadow="0 0 20px rgba(255,139,148,0.8)";stopVoice()}catch(e){console.log(e)}}
 function resetMicUI(){const m=document.getElementById('mic-btn');m.style.transform="scale(1)";m.style.background="var(--accent1)";m.style.color="var(--text)";m.style.boxShadow="0 4px 10px rgba(0,0,0,0.05)";document.getElementById('mic-status').innerText="Tap Mic to speak or Type to ask"}
 function checkAIEnter(e){if(e.key==='Enter')sendAIText()}
 function sendAIText(){const inp=document.getElementById('ai-text-input');const t=inp.value.trim();if(t){inp.value='';handleUserQuery(t)}}
-async function handleUserQuery(t){document.getElementById('user-chat').style.display='block';document.getElementById('user-text-span').innerText=t;document.getElementById('ai-chat').style.display='block';document.getElementById('ai-text-span').innerText="Thinking... 🤔";scrollToBottomAI();await askGemini(t)}
-function scrollToBottomAI(){const c=document.getElementById('chat-container');c.scrollTop=c.scrollHeight}
-async function askGemini(q){
+
+/* Dynamic Chat Bubbles */
+function appendChat(role, text, id=""){
+    const c=document.getElementById('chat-container');const div=document.createElement('div');
+    if(role==='user'){
+        div.style.cssText="background:#e1f5fe;padding:15px;border-radius:20px 20px 0 20px;border:2px solid #81d4fa;align-self:flex-end;max-width:90%;margin-top:10px;";
+        div.innerHTML=`<b style="color:#0288d1;font-size:1rem;">You:</b><br><span style="font-size:1.2rem;color:#01579b;">${text}</span>`;
+    }else{
+        div.style.cssText="background:#f3e5f5;padding:15px;border-radius:20px 20px 20px 0;border:2px solid #ce93d8;align-self:flex-start;max-width:90%;margin-top:10px;";
+        div.innerHTML=`<b style="color:#8e24aa;font-size:1rem;">AI Robot:</b><br><span id="${id}" style="font-size:1.2rem;color:#4a148c;">${text}</span>`;
+    }
+    c.appendChild(div);c.scrollTop=c.scrollHeight;
+    return id ? document.getElementById(id) : null;
+}
+async function handleUserQuery(t){
+    appendChat('user', t);
+    const aiSpanId = 'ai-msg-'+Date.now();
+    const aiSpan = appendChat('ai', 'Thinking... 🤔', aiSpanId);
+    await askGemini(t, aiSpan);
+}
+async function askGemini(q, spanEl){
     const p=`You are a sweet, funny AI teacher for Pari and Jiya. Give a very short, simple, safe answer in 1-2 lines. No * or ** formatting. Reply in Hindi if asked in Hindi, else easy English. Kid asked: "${q}"`;
-    try{const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:p}]}]})});const d=await r.json();if(d.candidates&&d.candidates[0].content.parts[0].text){let a=d.candidates[0].content.parts[0].text.replace(/\*/g,'');document.getElementById('ai-text-span').innerText=a;scrollToBottomAI();speakText(a)}else throw new Error("No ans")}
-    catch(e){document.getElementById('ai-text-span').innerText="My brain is sleeping! 😴";speakText("My brain is sleeping! Try again later.")}
+    try{
+        const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:p}]}]})});
+        const d=await r.json();
+        if(d.candidates&&d.candidates[0].content.parts[0].text){
+            let a=d.candidates[0].content.parts[0].text.replace(/\*/g,'');
+            spanEl.innerText=a;
+            document.getElementById('chat-container').scrollTop=document.getElementById('chat-container').scrollHeight;
+            speakText(a);
+        }else throw new Error("No ans");
+    }catch(e){
+        spanEl.innerText="My brain is sleeping! 😴 Check internet or API key.";
+        speakText("My brain is sleeping! Try again later.");
+    }
 }
 
-// ⭐ Search, Dictionary, Translator, Learn Logic ⭐
+/* ⭐ Search, Shapes, Dictionary, Quiz Logic ⭐ */
 let currentSearchType='normal';function openSafeSearch(){document.getElementById('safe-search-input').value='';setSearchType('normal',document.getElementById('tab-normal'));showScreen('safe-search-screen')}
 function setSearchType(t,b){currentSearchType=t;document.querySelectorAll('.type-btn').forEach(x=>{x.classList.remove('primary');x.classList.add('secondary')});b.classList.remove('secondary');b.classList.add('primary')}
 function checkEnterSearch(e){if(e.key==='Enter')performWebSearch('ddg')}
