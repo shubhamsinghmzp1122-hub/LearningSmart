@@ -500,18 +500,18 @@ async function handleUserQuery(t){
     await askGemini(t, aiSpan);
 }
 
-/* 🔥 THE DOUBLE-ENGINE FALLBACK (Jugaad) 🔥 */
+/* 🔥 THE DOUBLE-ENGINE FALLBACK (2026 Updated) 🔥 */
 async function askGemini(q, spanEl){
     const p=`You are a sweet, funny AI teacher for Pari and Jiya. Give a very short, simple, safe answer in 1-2 lines. No * symbols. Reply in Hindi if asked in Hindi, else easy English. Kid asked: "${q}"`;
     const bodyData = JSON.stringify({contents:[{parts:[{text:p}]}]});
     
     try{
-        // Engine 1: Pehle Flash Model try karo
-        let r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {method:'POST',headers:{'Content-Type':'application/json'},body:bodyData});
+        // Engine 1: Gemini 2.5 Flash (Latest 2026 Model) 🚀
+        let r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {method:'POST',headers:{'Content-Type':'application/json'},body:bodyData});
         
-        // Engine 2: Agar Google ne bola "Not Found", toh bina user ko bataye 1.0-pro (Bulletproof) model fire karo!
+        // Engine 2: Agar 2.5 fail hua toh 2.0 Flash try karo
         if(!r.ok){ 
-            r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${GEMINI_API_KEY}`, {method:'POST',headers:{'Content-Type':'application/json'},body:bodyData});
+            r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`, {method:'POST',headers:{'Content-Type':'application/json'},body:bodyData});
         }
 
         // Agar dono fail huye tab error dikhao
