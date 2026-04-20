@@ -385,13 +385,20 @@
             const data = await response.json();
             document.getElementById(loadingId).remove(); 
 
-            if (data.candidates && data.candidates[0].content.parts[0].text) {
+                        if (data.candidates && data.candidates[0].content.parts[0].text) {
                 let aiResponse = data.candidates[0].content.parts[0].text;
                 addChatMessage(aiResponse, 'ai');
                 speakText(aiResponse);
+            } else if (data.error) {
+                // ⭐ JASOOS CODE: Jo asli error screen par print karega
+                let errorMsg = "Google Error: " + data.error.message;
+                addChatMessage(errorMsg, 'ai');
+                console.log("FULL ERROR:", data.error);
             } else {
                 addChatMessage("Oops! My brain is confused. Try asking again! 😅", 'ai');
-            }
+                        }
+            
+            
         } catch (error) {
             console.error("API Error:", error);
             if(document.getElementById(loadingId)) document.getElementById(loadingId).remove();
