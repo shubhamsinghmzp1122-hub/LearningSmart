@@ -402,16 +402,12 @@
         history.innerHTML += `<div id="${loadingId}" class="chat-message ai-message"><div class="bubble">Thinking... 🤔</div></div>`;
         history.scrollTop = history.scrollHeight;
 
-                // ⭐ THE SMART TEACHER PROMPT (FIXED FOR OPENROUTER HINGLISH) ⭐
-        const promptInstruction = `You are a friendly and helpful AI assistant named "Sifra", talking to kids and students.
-        
+        // ⭐ THE STRICT HINGLISH PROMPT ⭐
+        const promptInstruction = `You are a friendly and helpful educational AI assistant named "Sifra", talking to kids and students.
         CRITICAL RULES:
-        1. You MUST reply ONLY in simple, natural conversational "Hinglish" (e.g., "Main Sifra hoon, main aapki madad kar sakti hoon!"). Do not use complex Urdu or pure Hindi words. Do not translate literally. Keep it simple like WhatsApp chats.
+        1. You MUST reply ONLY in simple, natural conversational "Hinglish" (e.g., "Main Sifra hoon, main aapki madad kar sakti hoon!"). Do not use complex Urdu or pure Hindi words. Keep it simple like WhatsApp chats.
         2. Keep your answers short (2-3 sentences max) and use emojis.
-        3. If the user asks for anything harmful, illegal, or about "hacking", gently refuse by saying something like: "Sorry bacchon, ye safe nahi hai, hum kuch achha seekhte hain!"
-        
-        Respond naturally to this user query: ${userText}`;
-    
+        3. If the user asks for anything harmful, illegal, or about "hacking", gently refuse by saying: "Sorry bacchon, ye safe nahi hai, hum kuch achha seekhte hain!"`;
 
         let isSuccess = false;
         let finalAiResponse = "";
@@ -443,22 +439,22 @@
             geminiErrorMsg = "Gemini Network Error";
         }
 
-        // ⭐ ENGINE 2: THE "BRAHMASTRA" (Auto-Free Model) IF GEMINI FAILS
+        // ⭐ ENGINE 2: GEMMA 2 (Google's model on OpenRouter for Perfect Hinglish)
         if (!isSuccess) {
-            console.log("Switching to OpenRouter Magic Fallback...");
+            console.log("Switching to OpenRouter Gemma 2 Fallback...");
             try {
                 const orUrl = "https://openrouter.ai/api/v1/chat/completions";
                 const orResponse = await fetch(orUrl, {
                     method: 'POST',
                     headers: {
                         "Authorization": `Bearer ${OPENROUTER_KEY}`, 
-                        "HTTP-Referer": "https://pari-jiya-app.com", // Zaroori hai
+                        "HTTP-Referer": "https://pari-jiya-app.com",
                         "X-Title": "Learning App",
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        // ⭐ THE MAGIC TRICK: Ye khud dhoondhega jo model free hoga!
-                        "model": "openrouter/free", 
+                        // ⭐ THE FIX: Gemma-2 model for best Hinglish backup!
+                        "model": "google/gemma-2-9b-it:free", 
                         "messages": [
                             {"role": "system", "content": promptInstruction},
                             {"role": "user", "content": userText}
@@ -492,12 +488,12 @@
             addChatMessage(finalAiResponse, 'ai');
             speakText(finalAiResponse);
         } else {
-            // ⭐ MAHA-JASOOS ERROR (Agar dono fail hue toh)
-            let debugError = `🚨 <b>Error Report:</b><br><br><b>Gemini:</b> ${geminiErrorMsg}<br><br><b>OpenRouter:</b> ${openRouterErrorMsg}<br><br>Bhai ab dono server sach mein busy hain! Thodi der mein try karna. 😅`;
+            // ⭐ MAHA-JASOOS ERROR
+            let debugError = `🚨 <b>Error Report:</b><br><br><b>Gemini:</b> ${geminiErrorMsg}<br><br><b>OpenRouter:</b> ${openRouterErrorMsg}<br><br>Bhai dono server fail ho gaye. Thodi der mein try karna. 😅`;
             addChatMessage(debugError, 'ai');
             speakText("Dono server down hain.");
         }
-    }
+                    }
     
     
     let recognition;
