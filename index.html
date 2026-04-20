@@ -434,22 +434,22 @@
             geminiErrorMsg = "Gemini Network Error";
         }
 
-        // ⭐ ENGINE 2: FALLBACK TO OPENROUTER (Naya Llama 3.3 Model) IF GEMINI FAILS
+        // ⭐ ENGINE 2: THE "BRAHMASTRA" (Auto-Free Model) IF GEMINI FAILS
         if (!isSuccess) {
-            console.log("Switching to OpenRouter Fallback Engine...");
+            console.log("Switching to OpenRouter Magic Fallback...");
             try {
                 const orUrl = "https://openrouter.ai/api/v1/chat/completions";
                 const orResponse = await fetch(orUrl, {
                     method: 'POST',
                     headers: {
-                        "Authorization": `Bearer ${OPENROUTER_KEY}`, // Yahan teri key automatically aa jayegi
-                        "HTTP-Referer": "https://pari-jiya-app.com", 
+                        "Authorization": `Bearer ${OPENROUTER_KEY}`, 
+                        "HTTP-Referer": "https://pari-jiya-app.com", // Zaroori hai
                         "X-Title": "Learning App",
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        // ⭐ THE FIX: Naya aur sabse khatarnak free model
-                        "model": "meta-llama/llama-3.3-70b-instruct:free", 
+                        // ⭐ THE MAGIC TRICK: Ye khud dhoondhega jo model free hoga!
+                        "model": "openrouter/free", 
                         "messages": [
                             {"role": "system", "content": promptInstruction},
                             {"role": "user", "content": userText}
@@ -483,10 +483,10 @@
             addChatMessage(finalAiResponse, 'ai');
             speakText(finalAiResponse);
         } else {
-            // ⭐ MAHA-JASOOS ERROR
-            let debugError = `🚨 <b>Error Report:</b><br><br><b>Gemini:</b> ${geminiErrorMsg}<br><br><b>OpenRouter:</b> ${openRouterErrorMsg}<br><br>Bhai dono API fail! Sahi key lagao! 😅`;
+            // ⭐ MAHA-JASOOS ERROR (Agar dono fail hue toh)
+            let debugError = `🚨 <b>Error Report:</b><br><br><b>Gemini:</b> ${geminiErrorMsg}<br><br><b>OpenRouter:</b> ${openRouterErrorMsg}<br><br>Bhai ab dono server sach mein busy hain! Thodi der mein try karna. 😅`;
             addChatMessage(debugError, 'ai');
-            speakText("Dono server fail ho gaye hain.");
+            speakText("Dono server down hain.");
         }
     }
     
