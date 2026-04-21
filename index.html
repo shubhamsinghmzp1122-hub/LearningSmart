@@ -161,6 +161,7 @@
 
             <button class="btn accent" style="grid-column: 1 / -1; box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);" onclick="openDrawingBoard()">🎨 Jadui Slate</button>
             
+            <button class="btn" style="background:#ff9ff3; color:var(--text); grid-column: 1 / -1; box-shadow: 0 0 10px rgba(255, 159, 243, 0.5);" onclick="openPiano()">🎹 Mini Piano</button>
             
             <button class="btn" style="background:var(--accent2); color:white; grid-column: 1 / -1; box-shadow: 0 0 10px rgba(132, 94, 194, 0.5);" onclick="openAiChat()">🤖 Smart AI Tutor</button>
         </div>
@@ -404,6 +405,89 @@
         draw(e);
     });
     canvas.addEventListener('touchend', stopDrawing);
+</script>
+
+
+<div id="piano-screen" class="screen">
+    <div class="top-bar">
+        <button class="btn back-btn" onclick="goHome()">🔙</button>
+        <h2 style="margin:0; color:#845EC2;">Mini Piano 🎹</h2>
+        <div style="width: 40px;"></div>
+    </div>
+    
+    <div style="text-align: center; margin-bottom: 20px; color: gray; font-size: 1.2rem;">
+        Music play karo! 🎵
+    </div>
+
+    <div style="display: flex; gap: 5px; justify-content: center; width: 100%; height: 50vh; max-height: 350px; padding: 0 10px;">
+        <div class="piano-key" style="background:#ff6b81;" onclick="playPianoNote(261.63, this)">Sa</div>
+        <div class="piano-key" style="background:#ff9ff3;" onclick="playPianoNote(293.66, this)">Re</div>
+        <div class="piano-key" style="background:#feca57;" onclick="playPianoNote(329.63, this)">Ga</div>
+        <div class="piano-key" style="background:#48dbfb;" onclick="playPianoNote(349.23, this)">Ma</div>
+        <div class="piano-key" style="background:#1dd1a1;" onclick="playPianoNote(392.00, this)">Pa</div>
+        <div class="piano-key" style="background:#5f27cd;" onclick="playPianoNote(440.00, this)">Dha</div>
+        <div class="piano-key" style="background:#ff9f43;" onclick="playPianoNote(493.88, this)">Ni</div>
+        <div class="piano-key" style="background:#ee5253;" onclick="playPianoNote(523.25, this)">Sa</div>
+    </div>
+</div>
+
+<style>
+    /* Piano Keys ka Design */
+    .piano-key {
+        flex: 1;
+        border-radius: 0 0 15px 15px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 15px;
+        font-weight: bold;
+        color: white;
+        font-size: clamp(1rem, 4vw, 1.4rem);
+        cursor: pointer;
+        box-shadow: 0 8px 0 rgba(0,0,0,0.15);
+        transition: transform 0.1s, box-shadow 0.1s;
+        border: 2px solid rgba(255,255,255,0.4);
+        border-top: none;
+        user-select: none;
+    }
+    .piano-key:active {
+        transform: translateY(8px);
+        box-shadow: 0 0 0 rgba(0,0,0,0.15);
+    }
+</style>
+
+<script>
+    // ==========================================
+    // ⭐ PIANO LOGIC ⭐
+    // ==========================================
+    function openPiano() {
+        showScreen('piano-screen');
+    }
+
+    function playPianoNote(freq, element) {
+        // Tere app mein pehle se audioCtx bana hua hai, usi ko use karenge!
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        
+        osc.type = 'sine'; // Smooth aawaz ke liye
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        
+        gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.5);
+
+        // Visual click effect
+        element.style.opacity = '0.7';
+        setTimeout(() => { element.style.opacity = '1'; }, 100);
+    }
 </script>
 
     
