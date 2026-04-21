@@ -159,7 +159,9 @@
             <button class="btn" style="background:var(--color-dict); color:white; grid-column: 1 / -1;" onclick="openDictionaryBook()">📚 Dictionary Book</button>
             <button class="btn" style="background:var(--color-trans); color:white; grid-column: 1 / -1;" onclick="openTranslator()">🌐 Translator (En ↔ Hi)</button>
 
-            <button class="btn accent" onclick="openSafari()">🦁 Safari & Fruits</button>
+            <div style="width: 100%; padding: 0 15px; box-sizing: border-box;">
+    <button class="btn accent" style="width: 100%; display: block;" onclick="openSafari()">🦁 Safari & Fruits</button>
+            </div>
             
             <button class="btn" style="background:var(--accent2); color:white; grid-column: 1 / -1; box-shadow: 0 0 10px rgba(132, 94, 194, 0.5);" onclick="openAiChat()">🤖 Smart AI Tutor</button>
         </div>
@@ -278,22 +280,43 @@
         </div>
         </div>
 
-        <div id="custom-safari-modal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); display:none; justify-content:center; align-items:center; z-index:10000;">
-        <div style="background:white; padding:25px; border-radius:20px; text-align:center; width: 85%; max-width: 350px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-            <div style="font-size:3rem; margin-bottom:10px;">🐾</div>
-            <h3 style="color:var(--primary); margin-bottom:15px; font-size:1.5rem;">Add New Item</h3>
-            
-            <input type="text" id="custom-en-name" placeholder="English Name (e.g., Dragon)" style="width:100%; padding:12px; margin-bottom:10px; border-radius:12px; border:2px solid var(--primary); font-size:1rem; outline:none; box-sizing: border-box;">
-            
-            <input type="text" id="custom-hi-name" placeholder="Hindi Name (e.g., ड्रैगन)" style="width:100%; padding:12px; margin-bottom:20px; border-radius:12px; border:2px solid var(--primary); font-size:1rem; outline:none; box-sizing: border-box;">
-            
-            <div style="display:flex; gap:15px; justify-content:center;">
-                <button onclick="closeCustomAddModal()" style="flex:1; background:#f1f2f6; color:#2f3542; border:none; padding:12px; border-radius:12px; font-size:1.1rem; font-weight:bold; cursor:pointer;">Cancel</button>
-                <button onclick="saveCustomSafariItem()" style="flex:1; background:var(--primary); color:white; border:none; padding:12px; border-radius:12px; font-size:1.1rem; font-weight:bold; cursor:pointer;">Save</button>
-            </div>
-        </div>
-        </div>
+        <div id="safari-screen" class="screen">
+    <div class="top-bar">
+        <button class="btn back-btn" onclick="goHome()">🔙</button>
+        <h2 style="margin:0;">Safari 🦁</h2>
+        <div style="width: 40px;"></div>
+    </div>
     
+    <div style="padding: 10px 15px;">
+        <input type="text" id="safari-search-box" placeholder="🔍 Type animal, bird, fruit..." onkeyup="filterSafari()" style="width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--primary); font-size: 1.1rem; outline: none; box-sizing: border-box;">
+    </div>
+
+    <div style="display:flex; gap:10px; justify-content:center; margin: 5px 15px 15px 15px;">
+        <button class="btn primary" style="flex:1; font-size:1rem; padding:10px;" onclick="renderSafari('animal')">Animals 🐘</button>
+        <button class="btn yellow" style="flex:1; font-size:1rem; padding:10px;" onclick="renderSafari('bird')">Birds 🦜</button>
+        <button class="btn accent" style="flex:1; font-size:1rem; padding:10px;" onclick="renderSafari('fruit')">Fruits 🍎</button>
+    </div>
+
+    <div id="safari-content" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 15px 20px 15px; overflow-y: auto; max-height: 65vh;">
+        </div>
+</div>
+
+<div id="custom-safari-modal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); display:none; justify-content:center; align-items:center; z-index:10000;">
+    <div style="background:white; padding:25px; border-radius:20px; text-align:center; width: 85%; max-width: 350px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+        <div style="font-size:3rem; margin-bottom:10px;">🐾</div>
+        <h3 style="color:var(--primary); margin-bottom:15px; font-size:1.5rem;">Add New Item</h3>
+        
+        <input type="text" id="custom-en-name" placeholder="English Name (e.g., Dragon)" style="width:100%; padding:12px; margin-bottom:10px; border-radius:12px; border:2px solid var(--primary); font-size:1rem; outline:none; box-sizing: border-box;">
+        
+        <input type="text" id="custom-hi-name" placeholder="Hindi Name (e.g., ड्रैगन)" style="width:100%; padding:12px; margin-bottom:20px; border-radius:12px; border:2px solid var(--primary); font-size:1rem; outline:none; box-sizing: border-box;">
+        
+        <div style="display:flex; gap:15px; justify-content:center;">
+            <button onclick="closeCustomAddModal()" style="flex:1; background:#f1f2f6; color:#2f3542; border:none; padding:12px; border-radius:12px; font-size:1.1rem; font-weight:bold; cursor:pointer;">Cancel</button>
+            <button onclick="saveCustomSafariItem()" style="flex:1; background:var(--primary); color:white; border:none; padding:12px; border-radius:12px; font-size:1.1rem; font-weight:bold; cursor:pointer;">Save</button>
+        </div>
+    </div>
+</div>
+        
 
 </div>
 
