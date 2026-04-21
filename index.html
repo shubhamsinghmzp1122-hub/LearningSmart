@@ -208,36 +208,39 @@
         <div style="width: 40px;"></div>
     </div>
     
-    <div style="background: white; border-radius: 15px; margin: 15px; padding: 15px; text-align: right; border: 2px solid var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-        <div id="calc-display" style="font-size: clamp(2rem, 8vw, 3rem); font-weight: bold; color: var(--text); word-wrap: break-word; min-height: 40px;">0</div>
-        <div id="calc-live-result" style="font-size: clamp(1.2rem, 5vw, 1.5rem); color: var(--success); min-height: 25px; margin-top: 5px; font-weight: bold;"></div>
-    </div>
+    <div style="max-width: 360px; margin: 20px auto; padding: 0 15px;">
+        
+        <div style="background: #f4f6f9; border-radius: 20px; padding: 25px 20px; margin-bottom: 20px; text-align: right; box-shadow: inset 0px 5px 10px rgba(0,0,0,0.05); border: 2px solid #e1e8ed;">
+            <div id="calc-display" style="font-size: clamp(2.5rem, 8vw, 3.5rem); font-weight: bold; color: #2c3e50; word-wrap: break-word; min-height: 50px; line-height: 1; letter-spacing: 1px;">0</div>
+            <div id="calc-live-result" style="font-size: clamp(1.2rem, 5vw, 1.5rem); color: #7f8c8d; min-height: 20px; margin-top: 8px; font-weight: 600;"></div>
+        </div>
 
-    <div class="calc-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 0 15px 15px 15px; max-width: 400px; margin: 0 auto;">
-        <button class="btn calc-btn primary" onclick="calcClear()">AC</button>
-        <button class="btn calc-btn yellow" onclick="calcInput('( )')">( )</button>
-        <button class="btn calc-btn yellow" onclick="calcInput('%')">%</button>
-        <button class="btn calc-btn yellow" onclick="calcInput('/')">÷</button>
+        <div class="calc-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+            <button class="btn calc-btn primary" onclick="calcClear()">AC</button>
+            <button class="btn calc-btn yellow" onclick="calcInput('( )')">( )</button>
+            <button class="btn calc-btn yellow" onclick="calcInput('%')">%</button>
+            <button class="btn calc-btn yellow" onclick="calcInput('/')">÷</button>
 
-        <button class="btn calc-btn secondary" onclick="calcInput('7')">7</button>
-        <button class="btn calc-btn secondary" onclick="calcInput('8')">8</button>
-        <button class="btn calc-btn secondary" onclick="calcInput('9')">9</button>
-        <button class="btn calc-btn yellow" onclick="calcInput('*')">×</button>
+            <button class="btn calc-btn secondary" onclick="calcInput('7')">7</button>
+            <button class="btn calc-btn secondary" onclick="calcInput('8')">8</button>
+            <button class="btn calc-btn secondary" onclick="calcInput('9')">9</button>
+            <button class="btn calc-btn yellow" onclick="calcInput('*')">×</button>
 
-        <button class="btn calc-btn secondary" onclick="calcInput('4')">4</button>
-        <button class="btn calc-btn secondary" onclick="calcInput('5')">5</button>
-        <button class="btn calc-btn secondary" onclick="calcInput('6')">6</button>
-        <button class="btn calc-btn yellow" onclick="calcInput('-')">−</button>
+            <button class="btn calc-btn secondary" onclick="calcInput('4')">4</button>
+            <button class="btn calc-btn secondary" onclick="calcInput('5')">5</button>
+            <button class="btn calc-btn secondary" onclick="calcInput('6')">6</button>
+            <button class="btn calc-btn yellow" onclick="calcInput('-')">−</button>
 
-        <button class="btn calc-btn secondary" onclick="calcInput('1')">1</button>
-        <button class="btn calc-btn secondary" onclick="calcInput('2')">2</button>
-        <button class="btn calc-btn secondary" onclick="calcInput('3')">3</button>
-        <button class="btn calc-btn yellow" onclick="calcInput('+')">+</button>
+            <button class="btn calc-btn secondary" onclick="calcInput('1')">1</button>
+            <button class="btn calc-btn secondary" onclick="calcInput('2')">2</button>
+            <button class="btn calc-btn secondary" onclick="calcInput('3')">3</button>
+            <button class="btn calc-btn yellow" onclick="calcInput('+')">+</button>
 
-        <button class="btn calc-btn secondary" onclick="calcInput('0')">0</button>
-        <button class="btn calc-btn secondary" onclick="calcInput('.')">.</button>
-        <button class="btn calc-btn primary" onclick="calcInput('BACK')">⌫</button>
-        <button class="btn calc-btn accent" onclick="calcCalculate()">=</button>
+            <button class="btn calc-btn secondary" onclick="calcInput('0')">0</button>
+            <button class="btn calc-btn secondary" onclick="calcInput('.')">.</button>
+            <button class="btn calc-btn primary" onclick="calcInput('BACK')">⌫</button>
+            <button class="btn calc-btn accent" onclick="calcCalculate()">=</button>
+        </div>
     </div>
     </div>
     
