@@ -200,8 +200,55 @@
     <div id="game-mode" class="screen"><div class="top-bar"><button class="btn back-btn" onclick="goHome()">🔙</button><h2 style="margin:0;">Game Mode 🎮</h2><div style="width: 40px;"></div></div><div class="game-stats" style="display: flex; justify-content: space-between; width: 100%; font-size: clamp(1.2rem, 5vw, 1.5rem); margin-bottom: 15px; font-weight: bold;"><div class="lives" id="game-lives">❤️❤️❤️</div><div class="score">⭐ <span id="game-score">0</span></div></div><div class="question-box" id="game-question">2 + 2 = ?</div><button class="btn yellow" style="font-size:clamp(1rem, 4vw, 1.2rem); padding: 10px; width:auto; margin: -10px auto 20px auto;" onclick="repeatQuestionVoice()">🔊 Listen Again</button><div class="options-grid" id="game-options"></div></div>
     <div id="game-over" class="screen"><h1>Game Over! 🕹️</h1><h2 style="font-size: clamp(3rem, 10vw, 5rem); margin: 20px 0;">⭐ <span id="final-game-score">0</span></h2><p style="font-size: clamp(1.2rem, 4vw, 1.5rem); margin-bottom: 20px;">Great trying! Keep practicing.</p><button class="btn primary" onclick="startGameMode()">🔄 Play Again</button><button class="btn yellow" onclick="goHome()">🏠 Go Home</button></div>
     <div id="leaderboard" class="screen"><div class="top-bar"><button class="btn back-btn" onclick="goHome()">🔙</button><h2 style="margin:0;">Leaderboard 🏆</h2><div style="width: 40px;"></div></div><div style="width:100%; overflow-x:auto;"><table class="leaderboard-table" id="leaderboard-table"><thead><tr><th>Rank</th><th>Name</th><th>Score</th><th>Date</th></tr></thead><tbody id="leaderboard-body"></tbody></table></div><button class="btn danger" style="background: var(--danger); margin-top: 30px;" onclick="clearLeaderboard()">🗑️ Clear Board</button></div>
-    <div id="calculator" class="screen"><div class="top-bar"><button class="btn back-btn" onclick="goHome()">🔙</button><h2 style="margin:0;">Calculator 🧮</h2><div style="width: 40px;"></div></div><div class="calc-display" id="calc-display">0</div><div class="calc-grid"><button class="btn calc-btn secondary" onclick="calcInput('7')">7</button><button class="btn calc-btn secondary" onclick="calcInput('8')">8</button><button class="btn calc-btn secondary" onclick="calcInput('9')">9</button><button class="btn calc-btn yellow" onclick="calcInput('/')">÷</button><button class="btn calc-btn secondary" onclick="calcInput('4')">4</button><button class="btn calc-btn secondary" onclick="calcInput('5')">5</button><button class="btn calc-btn secondary" onclick="calcInput('6')">6</button><button class="btn calc-btn yellow" onclick="calcInput('*')">×</button><button class="btn calc-btn secondary" onclick="calcInput('1')">1</button><button class="btn calc-btn secondary" onclick="calcInput('2')">2</button><button class="btn calc-btn secondary" onclick="calcInput('3')">3</button><button class="btn calc-btn yellow" onclick="calcInput('-')">−</button><button class="btn calc-btn primary" onclick="calcClear()">C</button><button class="btn calc-btn secondary" onclick="calcInput('0')">0</button><button class="btn calc-btn accent" onclick="calcCalculate()">=</button><button class="btn calc-btn yellow" onclick="calcInput('+')">+</button></div></div>
 
+        <div id="calculator" class="screen">
+        <button class="btn-icon back-btn" onclick="goHome()" style="margin: 15px;">⬅️ Back</button>
+        
+        <div style="background:#202124; padding:25px; border-radius:30px; max-width:350px; margin:20px auto; box-shadow: 0 15px 35px rgba(0,0,0,0.3); font-family: Arial, sans-serif;">
+            
+            <div style="text-align:right; margin-bottom:20px; min-height:100px; display:flex; flex-direction:column; justify-content:flex-end;">
+                <div id="calc-display" style="color:white; font-size:3.5rem; word-wrap:break-word; line-height:1.1; font-weight:300;">0</div>
+                <div id="calc-live-result" style="color:#81c995; font-size:1.5rem; min-height:1.8rem; margin-top:5px; font-weight:bold;"></div>
+            </div>
+            
+            <style>
+                .c-btn { background: #3c4043; color: #e8eaed; border: none; font-size: 1.8rem; border-radius: 50%; width: 65px; height: 65px; cursor: pointer; transition: 0.2s; display:flex; align-items:center; justify-content:center; margin:auto;}
+                .c-btn:active { background: #5f6368; transform: scale(0.95); }
+                .c-op { color: #81c995; font-size: 2rem;} /* Green Operators */
+                .c-ac { background: #5f6368; color: #81c995; font-weight: bold;} 
+                .c-eq { background: #8ab4f8; color: #202124; font-weight: bold; font-size: 2.2rem;} /* Blue Equal Button */
+            </style>
+
+            <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:12px;">
+                <button class="c-btn c-ac" onclick="calcClear()">AC</button>
+                <button class="c-btn c-op" onclick="calcInput('( )')">( )</button>
+                <button class="c-btn c-op" onclick="calcInput('%')">%</button>
+                <button class="c-btn c-op" onclick="calcInput('÷')">÷</button>
+
+                <button class="c-btn" onclick="calcInput('7')">7</button>
+                <button class="c-btn" onclick="calcInput('8')">8</button>
+                <button class="c-btn" onclick="calcInput('9')">9</button>
+                <button class="c-btn c-op" onclick="calcInput('×')">×</button>
+
+                <button class="c-btn" onclick="calcInput('4')">4</button>
+                <button class="c-btn" onclick="calcInput('5')">5</button>
+                <button class="c-btn" onclick="calcInput('6')">6</button>
+                <button class="c-btn c-op" onclick="calcInput('-')">-</button>
+
+                <button class="c-btn" onclick="calcInput('1')">1</button>
+                <button class="c-btn" onclick="calcInput('2')">2</button>
+                <button class="c-btn" onclick="calcInput('3')">3</button>
+                <button class="c-btn c-op" onclick="calcInput('+')">+</button>
+
+                <button class="c-btn" onclick="calcInput('0')">0</button>
+                <button class="c-btn" onclick="calcInput('.')">.</button>
+                <button class="c-btn" onclick="calcInput('BACK')">⌫</button>
+                <button class="c-btn c-eq" onclick="calcCalculate()">=</button>
+            </div>
+        </div>
+    </div>
+
+    
     <div id="ai-chat-screen" class="screen">
         <div class="top-bar">
             <button class="btn back-btn" onclick="goHome()">🔙</button>
@@ -481,8 +528,119 @@
     function nextGameQuestion() { currentGameQ = generateRandomQuestion(); const qBox = document.getElementById('game-question'); qBox.innerHTML = currentGameQ.question; qBox.classList.remove('bounce', 'shake'); const optsContainer = document.getElementById('game-options'); optsContainer.innerHTML = ''; optsContainer.style.gridTemplateColumns = currentGameQ.type==='compare'?'repeat(3, 1fr)':'repeat(2, 1fr)'; currentGameQ.options.forEach(opt => { const btn = document.createElement('button'); btn.className = 'btn option-btn secondary'; btn.innerText = currentGameQ.type==='tf'?(opt==='True'?'✅ True':'❌ False'):opt; btn.onclick = () => { document.querySelectorAll('#game-options .option-btn').forEach(b => b.disabled=true); let isC = (opt == currentGameQ.answer); playSound(isC); if(isC) { btn.style.background='var(--success)'; gameScore++; updateGameStats(); qBox.classList.add('bounce'); setTimeout(nextGameQuestion, 1200); } else { btn.style.background='var(--danger)'; gameLives--; updateGameStats(); qBox.classList.add('shake'); setTimeout(gameLives<=0?endGameMode:nextGameQuestion, 1500); } }; optsContainer.appendChild(btn); }); lastSpokenText = parseQuestionForVoice(currentGameQ); speakText(lastSpokenText); }
     function endGameMode() { document.getElementById('final-game-score').innerText = gameScore; showScreen('game-over'); }
 
-    let calcCurrent = '0'; function openCalculator() { calcCurrent = '0'; updateCalcDisplay(); showScreen('calculator'); } function updateCalcDisplay() { document.getElementById('calc-display').innerText = calcCurrent; } function calcInput(val) { if(calcCurrent === '0' && !isNaN(val)) calcCurrent = val; else if(!isNaN(val) || !isNaN(calcCurrent.slice(-1))) calcCurrent += val; updateCalcDisplay(); } function calcClear() { calcCurrent = '0'; updateCalcDisplay(); } function calcCalculate() { try { let res = new Function('return ' + calcCurrent.replace(/×/g, '*').replace(/÷/g, '/'))(); calcCurrent = (res%1!==0 ? res.toFixed(2) : res).toString(); updateCalcDisplay(); } catch(e) { calcCurrent = 'Error'; updateCalcDisplay(); setTimeout(calcClear, 1500); } }
+        // ==========================================
+    // ⭐ PRO SMART CALCULATOR LOGIC ⭐
+    // ==========================================
+    let calcCurrent = '0'; 
 
+    function openCalculator() { 
+        calcCurrent = '0'; 
+        updateCalcDisplay(); 
+        showScreen('calculator'); 
+    } 
+
+    function updateCalcDisplay() { 
+        document.getElementById('calc-display').innerText = calcCurrent; 
+        
+        // Live Preview Magic (Screnshot jaisa niche result dikhega)
+        try {
+            let evalStr = calcCurrent.replace(/×/g, '*').replace(/÷/g, '/').replace(/%/g, '/100');
+            
+            // Auto close brackets preview ke liye
+            let openB = (evalStr.match(/\(/g) || []).length;
+            let closeB = (evalStr.match(/\)/g) || []).length;
+            while(openB > closeB) { evalStr += ')'; closeB++; }
+            
+            // Result check karo
+            if(evalStr !== '0' && evalStr !== calcCurrent && !['+', '-', '*', '/'].includes(evalStr.slice(-1))) {
+                let res = new Function('return ' + evalStr)();
+                if(res !== undefined && !isNaN(res)) {
+                    document.getElementById('calc-live-result').innerText = (res%1!==0 ? res.toFixed(2) : res);
+                } else {
+                    document.getElementById('calc-live-result').innerText = '';
+                }
+            } else {
+                document.getElementById('calc-live-result').innerText = '';
+            }
+        } catch(e) {
+            document.getElementById('calc-live-result').innerText = '';
+        }
+    } 
+
+    function calcInput(val) { 
+        // 1. Backspace Logic
+        if (val === 'BACK') {
+            calcCurrent = calcCurrent.length > 1 ? calcCurrent.slice(0, -1) : '0';
+            updateCalcDisplay();
+            return;
+        }
+
+        // 2. Smart Bracket ( ) Logic
+        if (val === '( )') {
+            let openCount = (calcCurrent.match(/\(/g) || []).length;
+            let closeCount = (calcCurrent.match(/\)/g) || []).length;
+            let lastChar = calcCurrent.slice(-1);
+            
+            if (calcCurrent === '0') {
+                calcCurrent = '(';
+            } else if (openCount > closeCount && !['+', '-', '×', '÷', '('].includes(lastChar)) {
+                calcCurrent += ')';
+            } else {
+                if (!['+', '-', '×', '÷', '('].includes(lastChar)) {
+                    calcCurrent += '×('; // Agar number ke baad bracket laga toh Multiply kar do
+                } else {
+                    calcCurrent += '(';
+                }
+            }
+            updateCalcDisplay();
+            return;
+        }
+
+        // 3. Normal Numbers aur Operators
+        if (calcCurrent === '0' && !isNaN(val)) {
+            calcCurrent = val; 
+        } else if (calcCurrent === '0' && (val === '(' || val === '-')) {
+            calcCurrent = val;
+        } else if (calcCurrent === '0' && val === '.') {
+            calcCurrent = '0.';
+        } else {
+            // Check double operators (taaki +++ na ho jaye)
+            let lastChar = calcCurrent.slice(-1);
+            const ops = ['+', '-', '×', '÷', '%'];
+            if (ops.includes(val) && ops.includes(lastChar)) {
+                calcCurrent = calcCurrent.slice(0, -1) + val;
+            } else {
+                calcCurrent += val; 
+            }
+        }
+        updateCalcDisplay(); 
+    } 
+
+    function calcClear() { 
+        calcCurrent = '0'; 
+        updateCalcDisplay(); 
+    } 
+
+    function calcCalculate() { 
+        try { 
+            let evalStr = calcCurrent.replace(/×/g, '*').replace(/÷/g, '/').replace(/%/g, '/100');
+            
+            // Asli calculation se pehle choote hue brackets band karo
+            let openB = (evalStr.match(/\(/g) || []).length;
+            let closeB = (evalStr.match(/\)/g) || []).length;
+            while(openB > closeB) { evalStr += ')'; calcCurrent += ')'; closeB++; }
+
+            let res = new Function('return ' + evalStr)(); 
+            calcCurrent = (res%1!==0 ? res.toFixed(2) : res).toString(); 
+            updateCalcDisplay(); 
+        } catch(e) { 
+            calcCurrent = 'Error'; 
+            updateCalcDisplay(); 
+            setTimeout(calcClear, 1500); 
+        } 
+    }
+
+    
     // =========================================================================
     // ⭐ THE "BULLETPROOF WATERFALL" MASTERPLAN (6 KEYS ARRAY) ⭐
     // =========================================================================
