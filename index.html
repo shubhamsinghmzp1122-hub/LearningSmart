@@ -208,11 +208,11 @@
         <div style="width: 40px;"></div>
     </div>
     
-    <div style="max-width: 360px; margin: 20px auto; padding: 0 15px;">
+    <div style="width: 92%; max-width: 400px; margin: 20px auto; background: white; padding: 20px; border-radius: 25px; box-shadow: 0px 8px 25px rgba(0,0,0,0.1); border: 2px solid var(--color-days, #ffdd59);">
         
-        <div style="background: #f4f6f9; border-radius: 20px; padding: 25px 20px; margin-bottom: 20px; text-align: right; box-shadow: inset 0px 5px 10px rgba(0,0,0,0.05); border: 2px solid #e1e8ed;">
-            <div id="calc-display" style="font-size: clamp(2.5rem, 8vw, 3.5rem); font-weight: bold; color: #2c3e50; word-wrap: break-word; min-height: 50px; line-height: 1; letter-spacing: 1px;">0</div>
-            <div id="calc-live-result" style="font-size: clamp(1.2rem, 5vw, 1.5rem); color: #7f8c8d; min-height: 20px; margin-top: 8px; font-weight: 600;"></div>
+        <div style="background: #f4f6f9; border-radius: 15px; padding: 20px; margin-bottom: 25px; text-align: right; box-shadow: inset 0px 4px 8px rgba(0,0,0,0.05); border: 1px solid #e1e8ed;">
+            <div id="calc-display" style="font-size: clamp(2.5rem, 8vw, 3.5rem); font-weight: bold; color: var(--text); word-wrap: break-word; min-height: 50px; line-height: 1;">0</div>
+            <div id="calc-live-result" style="font-size: clamp(1.2rem, 5vw, 1.5rem); color: var(--success); min-height: 20px; margin-top: 8px; font-weight: bold;"></div>
         </div>
 
         <div class="calc-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
@@ -238,7 +238,7 @@
 
             <button class="btn calc-btn secondary" onclick="calcInput('0')">0</button>
             <button class="btn calc-btn secondary" onclick="calcInput('.')">.</button>
-            <button class="btn calc-btn primary" onclick="calcInput('BACK')">⌫</button>
+            <button class="btn calc-btn primary" style="font-size: 1.5rem;" onclick="calcInput('BACK')">⌫</button>
             <button class="btn calc-btn accent" onclick="calcCalculate()">=</button>
         </div>
     </div>
