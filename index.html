@@ -761,12 +761,12 @@
         }
     }
 
-    // ⭐ REAL-TIME RED/GREEN LOGIC ⭐
+    // ⭐ REAL-TIME RED/GREEN LOGIC (UPDATED SMART CATCH-UP) ⭐
     function checkAdvancedReadingProgress(spokenText) {
         let cleanSpoken = spokenText.toLowerCase().replace(/[.,!?]/g, '').trim().split(/\s+/);
         let cleanTargets = currentWords.map(w => w.toLowerCase().replace(/[.,!?]/g, ''));
         
-        // Step 1: Pehle saare pending words ko normal karo (taaki purana red hat jaye)
+        // Step 1: Pehle saare unmatched words ko normal karo (taaki purana red hat jaye)
         for(let i=0; i<cleanTargets.length; i++) {
             let span = document.getElementById('read-word-' + i);
             if (span.dataset.status !== 'matched') {
@@ -774,29 +774,52 @@
             }
         }
 
-        let expectedIndex = 0; // Hum dhoondh rahe hain ki baccha abhi kahan hai
-        
-        // Step 2: Bole gaye words ko target se match karo
-        for (let sWord of cleanSpoken) {
-            if (expectedIndex < cleanTargets.length) {
-                if (sWord === cleanTargets[expectedIndex]) {
-                    // Sahi Word 🟢
-                    let span = document.getElementById('read-word-' + expectedIndex);
+        // Step 2: Smart Match Logic (Baccha chahe shuru se padhe, ya sirf chhuta hua word padhe)
+        let sIdx = 0; // Spoken words ka index
+        let tIdx = 0; // Target words ka index
+
+        while (tIdx < cleanTargets.length && sIdx < cleanSpoken.length) {
+            let sWord = cleanSpoken[sIdx];
+            let tWord = cleanTargets[tIdx];
+            let span = document.getElementById('read-word-' + tIdx);
+
+            if (sWord === "") {
+                sIdx++; continue;
+            }
+
+            if (span.dataset.status === 'matched') {
+                // Agar word pehle se green hai, check karo kya bache ne ise dobara padha hai
+                if (sWord === tWord) {
+                    sIdx++; // Haan padha hai, toh spoken word ko aage badhao
+                }
+                tIdx++; // Target hamesha aage badhega
+            } else {
+                // Word green nahi hai, isko check karna zaroori hai
+                if (sWord === tWord) {
+                    // Sahi padh liya! 🟢
                     span.style.color = 'var(--success)';
                     span.dataset.status = 'matched';
-                    expectedIndex++;
-                } else if (sWord !== "") {
-                    // Galat Word 🔴 (Jo word bolna tha use Red kar do)
-                    let span = document.getElementById('read-word-' + expectedIndex);
-                    if (span.dataset.status !== 'matched') {
-                        span.style.color = 'var(--danger)'; 
-                    }
+                    sIdx++;
+                    tIdx++;
+                } else {
+                    // Galat padha! 🔴
+                    span.style.color = 'var(--danger)';
+                    sIdx++; // Spoken word skip karo par target wahi rakho
                 }
             }
         }
 
-        // Step 3: Kya saare words match ho gaye?
-        if (expectedIndex >= cleanTargets.length) {
+        // Step 3: Check karo kya saare words green (matched) ho gaye hain?
+        let allMatched = true;
+        for(let i=0; i<cleanTargets.length; i++) {
+            if (document.getElementById('read-word-' + i).dataset.status !== 'matched') {
+                allMatched = false;
+                break;
+            }
+        }
+
+        // Step 4: Agar sab sahi ho gaya toh agla sentence
+        if (allMatched) {
             if(isReadListening && readRecog) readRecog.stop();
             document.getElementById('read-status').innerText = "Superb! 🎉⭐⭐⭐";
             document.getElementById('read-status').style.color = 'var(--success)';
@@ -814,6 +837,8 @@
             }, 2500);
         }
     }
+    
+
 </script>
 
     
