@@ -632,22 +632,22 @@
         <div style="width: 40px;"></div>
     </div>
     
-    <div style="text-align: center; margin-bottom: 20px; color: gray; font-size: 1.1rem;">
-        Tap Mic and read the sentence loud! 🎙️
+    <div style="text-align: center; margin-bottom: 20px; color: gray; font-size: 1.1rem; padding: 0 10px;">
+        Tap Mic to read! Tap any word to hear it. 🎙️
     </div>
 
-    <div id="read-sentence-box" style="background: #fdfdfd; border: 3px dashed #00cec9; border-radius: 20px; padding: 30px 15px; margin-bottom: 30px; font-size: clamp(2rem, 8vw, 3rem); text-align: center; line-height: 1.5; font-weight: bold; width: 100%; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+    <div id="read-sentence-box" style="background: #fdfdfd; border: 3px dashed #00cec9; border-radius: 20px; padding: 30px 15px; margin-bottom: 30px; font-size: clamp(2.5rem, 8vw, 3.5rem); text-align: center; line-height: 1.6; font-weight: bold; width: 100%; box-shadow: 0 10px 20px rgba(0,0,0,0.05); display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;">
         </div>
 
-    <button id="read-mic-btn" class="btn primary" style="width: 80px; height: 80px; border-radius: 50%; font-size: 2.5rem; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 10px 0 rgba(0,0,0,0.2);" onclick="toggleReadMic()">
+    <button id="read-mic-btn" class="btn primary" style="width: 90px; height: 90px; border-radius: 50%; font-size: 3rem; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 10px 0 rgba(0,0,0,0.2);" onclick="toggleReadMic()">
         🎙️
     </button>
-    <div id="read-status" style="text-align: center; margin-top: 15px; font-size: 1.2rem; color: var(--text); font-weight: bold;"></div>
+    <div id="read-status" style="text-align: center; margin-top: 20px; font-size: 1.3rem; color: var(--text); font-weight: bold;"></div>
 </div>
 
 <script>
     // ==========================================
-    // ⭐ READ ALONG LOGIC ⭐
+    // ⭐ ADVANCED READ ALONG LOGIC ⭐
     // ==========================================
     const readingStories = [
         "I am a good kid",
@@ -671,7 +671,7 @@
         readRecog = new SpeechRec();
         readRecog.continuous = true;
         readRecog.interimResults = true;
-        readRecog.lang = 'en-US'; // English padhne ke liye
+        readRecog.lang = 'en-US'; 
 
         readRecog.onstart = function() {
             isReadListening = true;
@@ -683,10 +683,11 @@
 
         readRecog.onresult = function(event) {
             let transcript = '';
+            // Saari aawaz ko ek sath jodna (Live update ke liye)
             for (let i = event.resultIndex; i < event.results.length; i++) {
                 transcript += event.results[i][0].transcript.toLowerCase() + ' ';
             }
-            checkReadingProgress(transcript);
+            checkAdvancedReadingProgress(transcript);
         };
 
         readRecog.onend = function() {
@@ -716,23 +717,36 @@
         box.innerHTML = '';
         currentWords = readingStories[currentStoryIdx].split(' ');
         
-        // Har word ko span mein daalo taaki alag color de sakein
         currentWords.forEach((word, index) => {
             const span = document.createElement('span');
-            span.innerText = word + ' ';
+            span.innerText = word;
             span.id = 'read-word-' + index;
-            span.style.color = 'var(--text)'; // Default color
-            span.style.transition = 'color 0.3s';
+            span.dataset.status = 'pending';
+            
+            // CSS Styling for Words
+            span.style.color = 'var(--text)';
+            span.style.transition = 'all 0.2s ease-in-out';
+            span.style.cursor = 'pointer';
+            span.style.display = 'inline-block';
+            span.style.padding = '0 5px';
+            span.style.borderRadius = '10px';
+
+            // ⭐ CLICK TO SPEAK FEATURE ⭐
+            span.onclick = () => {
+                span.style.transform = 'scale(1.2)';
+                span.style.background = '#e1f5fe'; // Halka neela background click karne par
+                setTimeout(() => {
+                    span.style.transform = 'scale(1)';
+                    span.style.background = 'transparent';
+                }, 300);
+                speakText(word); // Sifra bolegi
+            };
+            
             box.appendChild(span);
         });
         
         document.getElementById('read-status').innerText = "Tap Mic and read!";
         document.getElementById('read-status').style.color = 'gray';
-        
-        // Pehle Sifra bol kar dikhayegi
-        setTimeout(() => {
-            speakBilingual(readingStories[currentStoryIdx], '');
-        }, 500);
     }
 
     function toggleReadMic() {
@@ -747,37 +761,53 @@
         }
     }
 
-    function checkReadingProgress(spokenText) {
-        let allMatched = true;
+    // ⭐ REAL-TIME RED/GREEN LOGIC ⭐
+    function checkAdvancedReadingProgress(spokenText) {
+        let cleanSpoken = spokenText.toLowerCase().replace(/[.,!?]/g, '').trim().split(/\s+/);
+        let cleanTargets = currentWords.map(w => w.toLowerCase().replace(/[.,!?]/g, ''));
         
-        // Clean spoken text
-        let cleanSpoken = spokenText.replace(/[.,!?]/g, '').trim().split(' ');
-
-        currentWords.forEach((word, index) => {
-            let cleanWord = word.toLowerCase().replace(/[.,!?]/g, '');
-            let wordSpan = document.getElementById('read-word-' + index);
-            
-            // Agar bola gaya word hamare sentence mein hai, toh green karo
-            if (cleanSpoken.includes(cleanWord)) {
-                wordSpan.style.color = 'var(--success)';
-            } else {
-                allMatched = false;
+        // Step 1: Pehle saare pending words ko normal karo (taaki purana red hat jaye)
+        for(let i=0; i<cleanTargets.length; i++) {
+            let span = document.getElementById('read-word-' + i);
+            if (span.dataset.status !== 'matched') {
+                 span.style.color = 'var(--text)';
             }
-        });
+        }
 
-        if (allMatched) {
-            // Bachhe ne poora sentence sahi padh liya!
-            if(isReadListening) readRecog.stop();
+        let expectedIndex = 0; // Hum dhoondh rahe hain ki baccha abhi kahan hai
+        
+        // Step 2: Bole gaye words ko target se match karo
+        for (let sWord of cleanSpoken) {
+            if (expectedIndex < cleanTargets.length) {
+                if (sWord === cleanTargets[expectedIndex]) {
+                    // Sahi Word 🟢
+                    let span = document.getElementById('read-word-' + expectedIndex);
+                    span.style.color = 'var(--success)';
+                    span.dataset.status = 'matched';
+                    expectedIndex++;
+                } else if (sWord !== "") {
+                    // Galat Word 🔴 (Jo word bolna tha use Red kar do)
+                    let span = document.getElementById('read-word-' + expectedIndex);
+                    if (span.dataset.status !== 'matched') {
+                        span.style.color = 'var(--danger)'; 
+                    }
+                }
+            }
+        }
+
+        // Step 3: Kya saare words match ho gaye?
+        if (expectedIndex >= cleanTargets.length) {
+            if(isReadListening && readRecog) readRecog.stop();
             document.getElementById('read-status').innerText = "Superb! 🎉⭐⭐⭐";
             document.getElementById('read-status').style.color = 'var(--success)';
-            playSound(true); // Happy sound
+            playSound(true); 
             speakBilingual('Excellent reading!', 'बहुत बढ़िया!');
             
-            // 2 second baad agla sentence
+            // 2.5 second baad agla sentence
             setTimeout(() => {
                 currentStoryIdx++;
                 if (currentStoryIdx >= readingStories.length) {
-                    currentStoryIdx = 0; // Wapas start se
+                    currentStoryIdx = 0; 
                     speakText("You have read all sentences. Great job!");
                 }
                 loadStorySentence();
@@ -785,7 +815,7 @@
         }
     }
 </script>
-    
+
     
 
 </div>
