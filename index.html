@@ -160,6 +160,8 @@
             <button class="btn" style="background:var(--color-trans); color:white; grid-column: 1 / -1;" onclick="openTranslator()">🌐 Translator (En ↔ Hi)</button>
 
             <button class="btn accent" style="grid-column: 1 / -1; box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);" onclick="openDrawingBoard()">🎨 Jadui Slate</button>
+
+            <button class="btn" style="background:#00cec9; color:white; grid-column: 1 / -1; box-shadow: 0 0 10px rgba(0, 206, 201, 0.5);" onclick="openReadAlong()">📖 Read & Speak (English)</button>
             
             <button class="btn" style="background:#ff7f50; color:white; grid-column: 1 / -1; box-shadow: 0 0 10px rgba(255, 127, 80, 0.5);" onclick="openMemoryGame()">🃏 Memory Match Game</button>
             
@@ -621,6 +623,169 @@
         flippedCards = []; // Array khaali karo agle turn ke liye
     }
 </script>
+
+
+<div id="read-along-screen" class="screen">
+    <div class="top-bar">
+        <button class="btn back-btn" onclick="closeReadAlong()">🔙</button>
+        <h2 style="margin:0; color:#00cec9;">Read Along 📖</h2>
+        <div style="width: 40px;"></div>
+    </div>
+    
+    <div style="text-align: center; margin-bottom: 20px; color: gray; font-size: 1.1rem;">
+        Tap Mic and read the sentence loud! 🎙️
+    </div>
+
+    <div id="read-sentence-box" style="background: #fdfdfd; border: 3px dashed #00cec9; border-radius: 20px; padding: 30px 15px; margin-bottom: 30px; font-size: clamp(2rem, 8vw, 3rem); text-align: center; line-height: 1.5; font-weight: bold; width: 100%; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+        </div>
+
+    <button id="read-mic-btn" class="btn primary" style="width: 80px; height: 80px; border-radius: 50%; font-size: 2.5rem; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 10px 0 rgba(0,0,0,0.2);" onclick="toggleReadMic()">
+        🎙️
+    </button>
+    <div id="read-status" style="text-align: center; margin-top: 15px; font-size: 1.2rem; color: var(--text); font-weight: bold;"></div>
+</div>
+
+<script>
+    // ==========================================
+    // ⭐ READ ALONG LOGIC ⭐
+    // ==========================================
+    const readingStories = [
+        "I am a good kid",
+        "The sun is yellow",
+        "I love my family",
+        "A cat is sleeping",
+        "Birds fly in the sky",
+        "I like to play games",
+        "The apple is red",
+        "Water is life"
+    ];
+    
+    let currentStoryIdx = 0;
+    let readRecog = null;
+    let isReadListening = false;
+    let currentWords = [];
+
+    // Setup Dedicated Recognition for Reading
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        readRecog = new SpeechRec();
+        readRecog.continuous = true;
+        readRecog.interimResults = true;
+        readRecog.lang = 'en-US'; // English padhne ke liye
+
+        readRecog.onstart = function() {
+            isReadListening = true;
+            document.getElementById('read-mic-btn').style.background = 'var(--danger)';
+            document.getElementById('read-mic-btn').style.animation = 'pulse 1s infinite';
+            document.getElementById('read-status').innerText = "Listening... 👀";
+            document.getElementById('read-status').style.color = 'var(--danger)';
+        };
+
+        readRecog.onresult = function(event) {
+            let transcript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                transcript += event.results[i][0].transcript.toLowerCase() + ' ';
+            }
+            checkReadingProgress(transcript);
+        };
+
+        readRecog.onend = function() {
+            isReadListening = false;
+            document.getElementById('read-mic-btn').style.background = 'var(--primary)';
+            document.getElementById('read-mic-btn').style.animation = 'none';
+            if (document.getElementById('read-status').innerText === "Listening... 👀") {
+                document.getElementById('read-status').innerText = "Tap mic to try again!";
+                document.getElementById('read-status').style.color = 'gray';
+            }
+        };
+    }
+
+    function openReadAlong() {
+        currentStoryIdx = 0;
+        loadStorySentence();
+        showScreen('read-along-screen');
+    }
+
+    function closeReadAlong() {
+        if(isReadListening && readRecog) readRecog.stop();
+        goHome();
+    }
+
+    function loadStorySentence() {
+        const box = document.getElementById('read-sentence-box');
+        box.innerHTML = '';
+        currentWords = readingStories[currentStoryIdx].split(' ');
+        
+        // Har word ko span mein daalo taaki alag color de sakein
+        currentWords.forEach((word, index) => {
+            const span = document.createElement('span');
+            span.innerText = word + ' ';
+            span.id = 'read-word-' + index;
+            span.style.color = 'var(--text)'; // Default color
+            span.style.transition = 'color 0.3s';
+            box.appendChild(span);
+        });
+        
+        document.getElementById('read-status').innerText = "Tap Mic and read!";
+        document.getElementById('read-status').style.color = 'gray';
+        
+        // Pehle Sifra bol kar dikhayegi
+        setTimeout(() => {
+            speakBilingual(readingStories[currentStoryIdx], '');
+        }, 500);
+    }
+
+    function toggleReadMic() {
+        if (!readRecog) {
+            alert("Mic not supported in this browser!");
+            return;
+        }
+        if (isReadListening) {
+            readRecog.stop();
+        } else {
+            readRecog.start();
+        }
+    }
+
+    function checkReadingProgress(spokenText) {
+        let allMatched = true;
+        
+        // Clean spoken text
+        let cleanSpoken = spokenText.replace(/[.,!?]/g, '').trim().split(' ');
+
+        currentWords.forEach((word, index) => {
+            let cleanWord = word.toLowerCase().replace(/[.,!?]/g, '');
+            let wordSpan = document.getElementById('read-word-' + index);
+            
+            // Agar bola gaya word hamare sentence mein hai, toh green karo
+            if (cleanSpoken.includes(cleanWord)) {
+                wordSpan.style.color = 'var(--success)';
+            } else {
+                allMatched = false;
+            }
+        });
+
+        if (allMatched) {
+            // Bachhe ne poora sentence sahi padh liya!
+            if(isReadListening) readRecog.stop();
+            document.getElementById('read-status').innerText = "Superb! 🎉⭐⭐⭐";
+            document.getElementById('read-status').style.color = 'var(--success)';
+            playSound(true); // Happy sound
+            speakBilingual('Excellent reading!', 'बहुत बढ़िया!');
+            
+            // 2 second baad agla sentence
+            setTimeout(() => {
+                currentStoryIdx++;
+                if (currentStoryIdx >= readingStories.length) {
+                    currentStoryIdx = 0; // Wapas start se
+                    speakText("You have read all sentences. Great job!");
+                }
+                loadStorySentence();
+            }, 2500);
+        }
+    }
+</script>
+    
     
 
 </div>
