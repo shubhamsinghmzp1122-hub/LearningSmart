@@ -131,71 +131,10 @@
         .send-btn { color: var(--success); }
         @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 139, 148, 0.7); } 70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(255, 139, 148, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 139, 148, 0); } }
     </style>
-
+    
         <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.10/dist/dotlottie-wc.js" type="module"></script>
+
 </head>
-    
-</head>
-
-       <div id="offline-screen" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#ffffff; z-index:99999; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;">
-        
-        <div style="width: 250px; height: 250px; margin: 0 auto;">
-            <dotlottie-wc src="https://lottie.host/9bab4a7f-48e4-474c-9875-6b8947879e41/miZfrcI92b.lottie" autoplay loop style="width:100%; height:100%;"></dotlottie-wc>
-        </div>
-
-        <h2 style="color:var(--danger); margin-top:20px; font-size: 2rem;">No Internet! 🌐</h2>
-        <p style="color:gray; font-size: 1.2rem; margin-top: 10px;">Bhai, internet band hai! <br> Please data ya Wi-Fi on karein.</p>
-        
-        <button id="retry-net-btn" class="btn primary" style="width:200px; margin-top:25px;" onclick="checkNetManual()">🔄 Try Again</button>
-    </div>
-
-</body> ```
-
----
-
-### 🛠️ Step 3: Smart JS Logic (Bina Refresh ke)
-Apne aakhri `<script>` tag ke andar ye naya logic daal de. Ye refresh karne ki jagah bas connection check karega:
-
-```javascript
-    // ==========================================
-    // ⭐ SMART INTERNET CHECKER ⭐
-    // ==========================================
-    function updateOnlineStatus() {
-        const offlineScreen = document.getElementById('offline-screen');
-        if (navigator.onLine) {
-            offlineScreen.style.display = 'none'; // Net aate hi screen gayab
-        } else {
-            offlineScreen.style.display = 'flex'; // Net jate hi screen chalu
-            if(typeof speakText === 'function') {
-                speakText("Oops! Internet band ho gaya hai.");
-            }
-        }
-    }
-
-    // "Try Again" Button ka Magic Logic
-    function checkNetManual() {
-        if (navigator.onLine) {
-            updateOnlineStatus(); // Agar net aa gaya toh screen hata do
-        } else {
-            // Agar net nahi aaya toh error page ki jagah bas button lal kardo
-            const btn = document.getElementById('retry-net-btn');
-            btn.innerText = "❌ Still Offline";
-            btn.style.background = "var(--danger)";
-            if(typeof speakText === 'function') speakText("Bhai, abhi bhi internet nahi hai.");
-            
-            // 2 second baad button wapas normal
-            setTimeout(() => {
-                btn.innerText = "🔄 Try Again";
-                btn.style.background = "var(--primary)";
-            }, 2000);
-        }
-    }
-
-    // Background listeners
-    window.addEventListener('online', updateOnlineStatus);
-    window.addEventListener('offline', updateOnlineStatus);
-    window.addEventListener('load', updateOnlineStatus);
-    
 <body>
 
 <div id="app">
@@ -905,7 +844,17 @@ Apne aakhri `<script>` tag ke andar ye naya logic daal de. Ye refresh karne ki j
 
 </script>
 
-    
+        <div id="offline-screen" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#ffffff; z-index:99999; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;">
+        
+        <div style="width: 250px; height: 250px; margin: 0 auto;">
+            <dotlottie-wc src="https://lottie.host/9bab4a7f-48e4-474c-9875-6b8947879e41/miZfrcI92b.lottie" autoplay loop style="width:100%; height:100%;"></dotlottie-wc>
+        </div>
+
+        <h2 style="color:var(--danger); margin-top:20px; font-size: 2rem;">No Internet Connection</h2>
+        <p style="color:gray; font-size: 1.2rem; margin-top: 10px;">You are currently offline.<br>Please check your Wi-Fi or mobile data.</p>
+        
+        <button id="retry-net-btn" class="btn primary" style="width:200px; margin-top:25px;" onclick="checkNetManual()">🔄 Try Again</button>
+        </div>
 
 </div>
 
@@ -1443,6 +1392,39 @@ Apne aakhri `<script>` tag ke andar ye naya logic daal de. Ye refresh karne ki j
     window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; downloadAppBtn.style.display = 'block'; });
     downloadAppBtn.addEventListener('click', async () => { if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') downloadAppBtn.style.display = 'none'; deferredPrompt = null; } else { document.getElementById('installModal').style.display = 'flex'; } });    
 
+        // ==========================================
+    // ⭐ SMART INTERNET CHECKER ⭐
+    // ==========================================
+    function updateOnlineStatus() {
+        const offlineScreen = document.getElementById('offline-screen');
+        if (navigator.onLine) {
+            offlineScreen.style.display = 'none';
+        } else {
+            offlineScreen.style.display = 'flex';
+            if(typeof speakText === 'function') speakText("Internet connection lost.");
+        }
+    }
+
+    function checkNetManual() {
+        if (navigator.onLine) {
+            updateOnlineStatus();
+        } else {
+            const btn = document.getElementById('retry-net-btn');
+            btn.innerHTML = "❌ Still Offline";
+            btn.style.background = "var(--danger)";
+            if(typeof speakText === 'function') speakText("Still offline. Please check your network.");
+            
+            setTimeout(() => {
+                btn.innerHTML = "🔄 Try Again";
+                btn.style.background = "var(--primary)";
+            }, 2000);
+        }
+    }
+
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    window.addEventListener('load', updateOnlineStatus);
+    
 </script>
-</body>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </html>
+</body
+</html>
