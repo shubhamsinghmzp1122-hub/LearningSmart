@@ -131,10 +131,26 @@
         .send-btn { color: var(--success); }
         @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 139, 148, 0.7); } 70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(255, 139, 148, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 139, 148, 0); } }
     </style>
+
+        <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.10/dist/dotlottie-wc.js" type="module"></script>
+</head>
+    
 </head>
 <body>
 
 <div id="app">
+
+    <div id="app">
+
+    <div id="offline-screen" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(255,255,255,0.95); backdrop-filter: blur(5px); z-index:9999; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;">
+        
+        <dotlottie-wc src="https://lottie.host/9bab4a7f-48e4-474c-9875-6b8947879e41/miZfrcI92b.lottie" style="width: clamp(150px, 60vw, 300px); height: clamp(150px, 60vw, 300px);" autoplay loop></dotlottie-wc>
+
+        <h2 style="color:var(--danger); margin-top:20px; font-size: clamp(1.8rem, 6vw, 2.5rem);">No Internet! 🌐</h2>
+        <p style="color:gray; font-size: clamp(1rem, 4vw, 1.3rem); margin-top: 10px;">Bhai, internet band hai! <br> Please data ya Wi-Fi on karein.</p>
+        
+        <button class="btn primary" style="width:auto; padding: 15px 30px; margin-top:25px;" onclick="window.location.reload()">🔄 Try Again</button>
+    </div>
 
     <div id="home" class="screen active">
         <h1>🎉 Pari ❤️ Jiya Learning App 📚</h1>
@@ -1379,6 +1395,29 @@
     window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; downloadAppBtn.style.display = 'block'; });
     downloadAppBtn.addEventListener('click', async () => { if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') downloadAppBtn.style.display = 'none'; deferredPrompt = null; } else { document.getElementById('installModal').style.display = 'flex'; } });    
 
+    // ==========================================
+    // ⭐ SMART INTERNET CHECKER ⭐
+    // ==========================================
+    function updateOnlineStatus() {
+        const offlineScreen = document.getElementById('offline-screen');
+        if (navigator.onLine) {
+            offlineScreen.style.display = 'none'; // Net aa gaya, screen hatao
+        } else {
+            offlineScreen.style.display = 'flex'; // Net gaya, Lottie dikhao
+            if(typeof speakText === 'function') {
+                speakText("Oops! Internet band ho gaya hai.");
+            }
+        }
+    }
+
+    // Har pal nazar rakhenge
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+
+    // App khulte hi check karo
+    window.addEventListener('load', updateOnlineStatus);
+                
+    
 </script>
 </body>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               </html>
