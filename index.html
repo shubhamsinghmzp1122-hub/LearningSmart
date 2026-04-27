@@ -148,10 +148,10 @@
         <p style="font-size: clamp(1rem, 3.5vw, 1.2rem); margin-bottom: 15px; color: gray;">Let's learn and play!</p>
 
         
-                <button class="btn" style="background: #f1f2f6; color: var(--text); border: 2px solid #dcdde1; width: auto; padding: 8px 20px; font-size: 1rem; margin: -5px auto 15px auto; box-shadow: 0 4px 0 #dcdde1;" onclick="if(navigator.onLine){ window.location.href = window.location.pathname + '?v=' + new Date().getTime(); } else { speakText('No internet. Cannot update.'); }">
-            🔄 Update App
-                </button>
-
+                        <button id="updateAppBtn" class="btn" style="background: #f1f2f6; color: var(--text); border: 2px solid #dcdde1; width: auto; padding: 8px 20px; font-size: 1rem; margin: -5px auto 15px auto; box-shadow: 0 4px 0 #dcdde1; display: none;" onclick="if(navigator.onLine){ window.location.href = window.location.pathname + '?v=' + new Date().getTime(); } else { speakText('No internet. Cannot update.'); }">
+            🔄 Update Available!
+                        </button>
+        
         
         <button id="downloadAppBtn" class="btn" style="background: linear-gradient(90deg, #FF6B6B, #4ECDC4); border: 2px solid #fff; box-shadow: 0 0 15px rgba(255, 107, 107, 0.5); display: none; font-weight: bold; margin-bottom: 15px; animation: bounce 2s infinite;">
             📲 INSTALL LEARNING APP
@@ -1397,14 +1397,35 @@
         if (micBtn.classList.contains('recording')) recognition.stop(); else recognition.start();
     }
 
-    let deferredPrompt; const downloadAppBtn = document.getElementById('downloadAppBtn');
-    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Fail', err)); }); }
+    
+    
+        let deferredPrompt; const downloadAppBtn = document.getElementById('downloadAppBtn');
+    
+    // ⭐ SMART SERVICE WORKER (Update Detector) ⭐
+    if ('serviceWorker' in navigator) { 
+        window.addEventListener('load', () => { 
+            navigator.serviceWorker.register('sw.js').then(reg => {
+                // Naya update check karega
+                reg.addEventListener('updatefound', () => {
+                    const newWorker = reg.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            // Update available hai, button dikhao!
+                            document.getElementById('updateAppBtn').style.display = 'block';
+                            console.log("New Update Ready!");
+                        }
+                    });
+                });
+            }).catch(err => console.log('SW Fail', err)); 
+        }); 
+    }
+
     window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; downloadAppBtn.style.display = 'block'; });
     downloadAppBtn.addEventListener('click', async () => { if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') downloadAppBtn.style.display = 'none'; deferredPrompt = null; } else { document.getElementById('installModal').style.display = 'flex'; } });    
 
       // ==========================================
     // ⭐ SMART INTERNET CHECKER ⭐
-    // ==========================================
+    
     function updateOnlineStatus() {
         const offlineScreen = document.getElementById('offline-screen');
         if (navigator.onLine) {
