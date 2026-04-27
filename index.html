@@ -24,9 +24,13 @@
             --color-google: #4285F4; --color-ddg: #de5833;
         }
 
-        * { box-sizing: border-box; font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif; margin: 0; padding: 0; user-select: none; touch-action: manipulation; }
-        body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 0; overflow-x: hidden; overscroll-behavior-y: none; }
+                /* ⭐ CHROME PULL-TO-REFRESH BLOCKER ⭐ */
+        html, body { overscroll-behavior-y: none; }
 
+        * { box-sizing: border-box; font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif; margin: 0; padding: 0; user-select: none; touch-action: manipulation; }
+        body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 0; overflow-x: hidden; }
+
+        
         #app { background: white; width: 100%; max-width: 500px; margin: auto; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; padding: 10px; }
         @media (min-width: 501px) { #app { height: 95vh; border-radius: clamp(15px, 4vw, 30px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: clamp(4px, 1vw, 8px) solid var(--accent1); } }
 
@@ -142,11 +146,13 @@
     <div id="home" class="screen active">
         <h1>🎉 Pari ❤️ Jiya Learning App 📚</h1>
         <p style="font-size: clamp(1rem, 3.5vw, 1.2rem); margin-bottom: 15px; color: gray;">Let's learn and play!</p>
-        
-        <button class="btn" style="background: #f1f2f6; color: var(--text); border: 2px solid #dcdde1; width: auto; padding: 8px 20px; font-size: 1rem; margin: -5px auto 15px auto; box-shadow: 0 4px 0 #dcdde1;" onclick="window.location.reload(true)">
-            🔄 Update App
-        </button>
 
+        
+                <button class="btn" style="background: #f1f2f6; color: var(--text); border: 2px solid #dcdde1; width: auto; padding: 8px 20px; font-size: 1rem; margin: -5px auto 15px auto; box-shadow: 0 4px 0 #dcdde1;" onclick="if(navigator.onLine){ window.location.href = window.location.pathname + '?v=' + new Date().getTime(); } else { speakText('No internet. Cannot update.'); }">
+            🔄 Update App
+                </button>
+
+        
         <button id="downloadAppBtn" class="btn" style="background: linear-gradient(90deg, #FF6B6B, #4ECDC4); border: 2px solid #fff; box-shadow: 0 0 15px rgba(255, 107, 107, 0.5); display: none; font-weight: bold; margin-bottom: 15px; animation: bounce 2s infinite;">
             📲 INSTALL LEARNING APP
         </button>
