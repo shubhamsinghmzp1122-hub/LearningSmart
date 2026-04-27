@@ -1423,7 +1423,7 @@
     window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; downloadAppBtn.style.display = 'block'; });
     downloadAppBtn.addEventListener('click', async () => { if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') downloadAppBtn.style.display = 'none'; deferredPrompt = null; } else { document.getElementById('installModal').style.display = 'flex'; } });    
 
-      // ==========================================
+      // ================================
     // ⭐ SMART INTERNET CHECKER ⭐
     //===================================
         
