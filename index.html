@@ -1343,13 +1343,15 @@ async function sendToAI() {
         } else {
             // ⭐ Jhol Fix: Agar keys thaki hain toh asli error message dikhao
             let errorText = data.error || "Server Error";
-            addChatMessage(`🚨 <b>Sifra System Note:</b> ${errorText}`, 'ai');
+            addChatMessage(`🚨 **Sifra System Note:** ${errorText}`, 'ai');
+
             speakText("Keys are tired.");
         }
     } catch (error) {
         clearTimeout(wakeUpTimer); 
         if(document.getElementById(loadingId)) document.getElementById(loadingId).remove(); 
-        addChatMessage("🚨 <b>Network Error:</b> Server se connect nahi ho paa raha hai. Internet check karein!", 'ai');
+        addChatMessage("🚨 **Network Error:** Server se connect nahi ho paa raha hai. Internet check karein!", 'ai');
+
     }
 }
 
