@@ -1315,11 +1315,9 @@ async function sendToAI() {
     const loadingId = 'loading-' + Date.now();
     const history = document.getElementById('chat-history');
     
-    // <span> tag ke saath dynamic loader message create kar rahe hain
     history.innerHTML += `<div id="${loadingId}" class="chat-message ai-message"><div class="bubble"><span id="text-${loadingId}">Thinking... 🤔</span></div></div>`;
     history.scrollTop = history.scrollHeight;
 
-    // ⏳ 5 Second ka Timer: Agar Render server sleep mode me hoga toh ye chal jayega
     const wakeUpTimer = setTimeout(() => {
         const loadingText = document.getElementById(`text-${loadingId}`);
         if (loadingText) {
@@ -1336,19 +1334,22 @@ async function sendToAI() {
 
         const data = await response.json();
         
-        clearTimeout(wakeUpTimer); // Response aate hi timer ko turant roko
+        clearTimeout(wakeUpTimer); 
         if(document.getElementById(loadingId)) document.getElementById(loadingId).remove(); 
 
         if (response.ok && data.reply) {
             addChatMessage(data.reply, 'ai');
             speakText(data.reply); 
         } else {
-            throw new Error(data.error || "Server Error");
+            // ⭐ Jhol Fix: Agar keys thaki hain toh asli error message dikhao
+            let errorText = data.error || "Server Error";
+            addChatMessage(`🚨 <b>Sifra System Note:</b> ${errorText}`, 'ai');
+            speakText("Keys are tired.");
         }
     } catch (error) {
-        clearTimeout(wakeUpTimer); // Error aane par bhi timer band karo
+        clearTimeout(wakeUpTimer); 
         if(document.getElementById(loadingId)) document.getElementById(loadingId).remove(); 
-        addChatMessage("🚨 Server se sampark nahi ho paya. Kripya 1 minute baad dobara try karein! 😅", 'ai');
+        addChatMessage("🚨 <b>Network Error:</b> Server se connect nahi ho paa raha hai. Internet check karein!", 'ai');
     }
 }
 
