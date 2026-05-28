@@ -1272,15 +1272,15 @@ async function sendToAI() {
     const loadingId = 'loading-' + Date.now();
     const history = document.getElementById('chat-history');
     
-    // Yahan main <span> me ID lagayi hai taaki text easily change ho sake
+    // <span> tag ke saath dynamic loader message create kar rahe hain
     history.innerHTML += `<div id="${loadingId}" class="chat-message ai-message"><div class="bubble"><span id="text-${loadingId}">Thinking... 🤔</span></div></div>`;
     history.scrollTop = history.scrollHeight;
 
-    // ⏳ 5 Second ka Timer: Agar server sleep me hai
+    // ⏳ 5 Second ka Timer: Agar Render server sleep mode me hoga toh ye chal jayega
     const wakeUpTimer = setTimeout(() => {
         const loadingText = document.getElementById(`text-${loadingId}`);
         if (loadingText) {
-            loadingText.innerHTML = "Sifra is waking up, it might take a minute... 😴⏳";
+            loadingText.innerHTML = "Sifra gehri neend me thi, abhi jaag rahi hai... 😴✨<br><small style='font-size:0.8rem; color:gray;'>(Pehli baar me 30 seconds lag sakte hain)</small>";
         }
     }, 5000); 
 
@@ -1293,7 +1293,7 @@ async function sendToAI() {
 
         const data = await response.json();
         
-        clearTimeout(wakeUpTimer); // Result aa gaya toh timer band kar do
+        clearTimeout(wakeUpTimer); // Response aate hi timer ko turant roko
         if(document.getElementById(loadingId)) document.getElementById(loadingId).remove(); 
 
         if (response.ok && data.reply) {
@@ -1303,9 +1303,9 @@ async function sendToAI() {
             throw new Error(data.error || "Server Error");
         }
     } catch (error) {
-        clearTimeout(wakeUpTimer); 
+        clearTimeout(wakeUpTimer); // Error aane par bhi timer band karo
         if(document.getElementById(loadingId)) document.getElementById(loadingId).remove(); 
-        addChatMessage("🚨 Server offline hai ya jag nahi paya. Thodi der baad try karo! 😅", 'ai');
+        addChatMessage("🚨 Server se sampark nahi ho paya. Kripya 1 minute baad dobara try karein! 😅", 'ai');
     }
 }
 
