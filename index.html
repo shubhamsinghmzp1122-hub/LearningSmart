@@ -675,15 +675,14 @@
     // ⭐ ADVANCED READ ALONG LOGIC ⭐
     // ==========================================
     const readingStories = [
-        "I am a good kid",
-        "The sun is yellow",
-        "I love my family",
-        "A cat is sleeping",
-        "Birds fly in the sky",
-        "I like to play games",
-        "The apple is red",
-        "Water is life"
-    ];
+            "I am a good kid", "The sun is yellow", "I love my family", "A cat is sleeping", 
+            "Birds fly in sky", "The apple is red", "Water is life", "I like to play",
+            "The dog can run", "A fish can swim", "Look at the moon", "This is my book",
+            "The sky is blue", "I see a star", "The milk is hot", "The ball is round",
+            "I have a toy", "The tree is tall", "I can jump high", "The frog is green",
+            "My mom is sweet", "My dad is strong", "I love to learn", "The ice is cold",
+            "A bird can sing", "The cow gives milk", "The bus is big", "I smile every day"
+        ];
     
     let currentStoryIdx = 0;
     let readRecog = null;
@@ -737,10 +736,54 @@
         goHome();
     }
 
-    function loadStorySentence() {
+    // ⭐ ONLINE DYNAMIC GENERATOR + 10-SEC OFFLINE FALLBACK HYBRID ENGINE ⭐
+    async function loadStorySentence() {
+        const box = document.getElementById('read-sentence-box');
+        
+        // 1. Pehle screen par loading state dikhao
+        box.innerHTML = '<span style="font-size:1.5rem; color:gray; font-weight:normal;">Sifra naya sentence soch rahi hai... ⏳</span>';
+        document.getElementById('read-status').innerText = "Loading... 👀";
+
+        let apiResponded = false;
+
+        // ⏱️ TIMER: Agar 10 second tak cloud response nahi aaya, toh local pool se uthao!
+        const fallbackTimeout = setTimeout(() => {
+            if (!apiResponded) {
+                apiResponded = true;
+                console.log("10 seconds over! Switching to local paragraph pool...");
+                // readingStories wale array mein se koi bhi ek random sentence pick karega
+                const fallbackSentence = readingStories[Math.floor(Math.random() * readingStories.length)];
+                renderSentenceWords(fallbackSentence);
+            }
+        }, 10000);
+
+        try {
+            // 2. Cloud backend se random text mangwa rahe hain
+            const response = await fetch('https://learningsmartbackend.onrender.com/api/generate-text');
+            const data = await response.json();
+
+            // Agar 10 second se pehle tezi se response aa gaya
+            if (!apiResponded && response.ok && data.text) {
+                apiResponded = true;
+                clearTimeout(fallbackTimeout); // Timer ko roko
+                renderSentenceWords(data.text); // AI wala sentence screen par lagao
+            }
+        } catch (error) {
+            // Agar internet band ho ya koi network error aaye, toh bina atke local pool chalega
+            if (!apiResponded) {
+                apiResponded = true;
+                clearTimeout(fallbackTimeout);
+                const fallbackSentence = readingStories[Math.floor(Math.random() * readingStories.length)];
+                renderSentenceWords(fallbackSentence);
+            }
+        }
+    }
+
+    // 🛠️ HELPER FUNCTION: Jo text ko todkar click-to-speak spans banayega
+    function renderSentenceWords(sentence) {
         const box = document.getElementById('read-sentence-box');
         box.innerHTML = '';
-        currentWords = readingStories[currentStoryIdx].split(' ');
+        currentWords = sentence.split(' ');
         
         currentWords.forEach((word, index) => {
             const span = document.createElement('span');
@@ -748,7 +791,7 @@
             span.id = 'read-word-' + index;
             span.dataset.status = 'pending';
             
-            // CSS Styling for Words
+            // Words styling
             span.style.color = 'var(--text)';
             span.style.transition = 'all 0.2s ease-in-out';
             span.style.cursor = 'pointer';
@@ -756,15 +799,15 @@
             span.style.padding = '0 5px';
             span.style.borderRadius = '10px';
 
-            // ⭐ CLICK TO SPEAK FEATURE ⭐
+            // Tap karne par Sifra bolegi
             span.onclick = () => {
                 span.style.transform = 'scale(1.2)';
-                span.style.background = '#e1f5fe'; // Halka neela background click karne par
+                span.style.background = '#e1f5fe';
                 setTimeout(() => {
                     span.style.transform = 'scale(1)';
                     span.style.background = 'transparent';
                 }, 300);
-                speakText(word); // Sifra bolegi
+                speakText(word);
             };
             
             box.appendChild(span);
