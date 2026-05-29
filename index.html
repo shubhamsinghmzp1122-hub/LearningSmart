@@ -266,7 +266,7 @@
     
     <div id="ai-chat-screen" class="screen">
         <div class="top-bar">
-            <button class="btn back-btn" onclick="goHome()">🔙</button>
+            <button class="btn back-btn" onclick="closeAiChat()">🔙</button>
             <h2 style="margin:0; color:var(--accent2);">Sifra ✨</h2>
             <button class="btn-icon" style="background:var(--success); color:white; width: 40px; height: 40px; font-size: 1rem;" onclick="speakText('Hello! Main Sifra hoon.')">🔊</button>
         </div>
@@ -1303,18 +1303,26 @@
     history.scrollTop = history.scrollHeight;
 }
 
-// ⭐ GLOBAL VARIABLE: Spamming rokne ke liye state manager
+// =========================================================
+// ⭐ SIFRA SMART TUTOR: 6-MESSAGE TIFFIN BOX MEMORY ENGINE ⭐
+// =========================================================
 let isSifraThinking = false;
+let sifraHistory = []; // 🍱 Yeh hai Sifra ka Tiffin Box (Memory Array)
+
+// 🚪 Chat se bahar aane par tiffin saaf karne wala function
+function closeAiChat() {
+    sifraHistory = []; // Tiffin ekdum khaali 🧼
+    console.log("Sifra ka tiffin saaf ho gaya!");
+    goHome(); // Wapas home screen par jao
+}
 
 async function sendToAI() {
-    // Agar Sifra pehle se soch rahi hai, toh naya message send nahi hoga (Spamming Blocked)
     if (isSifraThinking) return; 
 
     const inputEl = document.getElementById('ai-input-text');
     const userText = inputEl.value.trim();
     if (!userText) return;
 
-    // State ko true karo aur input box ko temporary disable kar do
     isSifraThinking = true;
     inputEl.disabled = true;
     if(inputEl.placeholder) inputEl.placeholder = "Sifra is typing... 💬";
@@ -1329,7 +1337,6 @@ async function sendToAI() {
     history.innerHTML += `<div id="${loadingId}" class="chat-message ai-message"><div class="bubble"><span id="text-${loadingId}">Thinking... 🤔</span></div></div>`;
     history.scrollTop = history.scrollHeight;
 
-    // ⏱️ TIMER FIX: Ab 5 second ke bajay full 12 second (12000ms) baad hi neend wala message dikhega
     const wakeUpTimer = setTimeout(() => {
         const loadingText = document.getElementById(`text-${loadingId}`);
         if (loadingText) {
@@ -1337,11 +1344,17 @@ async function sendToAI() {
         }
     }, 12000); 
 
+    // 🧠 TIFFIN PACKER: Agar tiffin mein purani baaten hain, toh unhe naye sawaal ke sath jodkar bhejo
+    let messageWithMemory = userText;
+    if (sifraHistory.length > 0) {
+        messageWithMemory = `Context of our conversation:\n${sifraHistory.join("\n")}\nNew query: ${userText}`;
+    }
+
     try {
         const response = await fetch('https://learningsmartbackend.onrender.com/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: userText })
+            body: JSON.stringify({ message: messageWithMemory }) // Itihas ke sath message gaya backend par
         });
 
         const data = await response.json();
@@ -1352,8 +1365,16 @@ async function sendToAI() {
         if (response.ok && data.reply) {
             addChatMessage(data.reply, 'ai');
             speakText(data.reply); 
+
+            // 🍱 SLIDING WINDOW (Tiffin System): Naya sawaal aur jawab tiffin mein dalo
+            sifraHistory.push(`User: ${userText}`);
+            sifraHistory.push(`Sifra: ${data.reply}`);
+
+            // Agar tiffin mein 6 se zyada messages ho gaye, toh neeche se purana message nikal phekो
+            while (sifraHistory.length > 6) {
+                sifraHistory.shift(); // Niche se khali hona shuru
+            }
         } else {
-            // Backend se aane wala sweet fallback message dikhayega bina bacchon ko disturb kiye
             addChatMessage(data.reply || "Arey bacchon! Sifra ko thodi si neend aa rahi hai, chalo 1 minute ka break lekar fir se baaten karte hain! 😊", 'ai');
         }
     } catch (error) {
@@ -1361,11 +1382,10 @@ async function sendToAI() {
         if(document.getElementById(loadingId)) document.getElementById(loadingId).remove(); 
         addChatMessage("🚨 **Network Error:** Server se connect nahi ho paa raha hai. Internet check karne ko kahein!", 'ai');
     } finally {
-        // 🔥 ALL CLEAR: Request poori hote hi lock khol do taaki naya message bheja ja sake
         isSifraThinking = false;
         inputEl.disabled = false;
         inputEl.placeholder = "Ask Sifra...";
-        inputEl.focus(); // Dubara typing ke liye focus active
+        inputEl.focus(); 
     }
 }
 
