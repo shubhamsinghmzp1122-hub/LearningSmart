@@ -1303,10 +1303,21 @@
     history.scrollTop = history.scrollHeight;
 }
 
+// ⭐ GLOBAL VARIABLE: Spamming rokne ke liye state manager
+let isSifraThinking = false;
+
 async function sendToAI() {
+    // Agar Sifra pehle se soch rahi hai, toh naya message send nahi hoga (Spamming Blocked)
+    if (isSifraThinking) return; 
+
     const inputEl = document.getElementById('ai-input-text');
     const userText = inputEl.value.trim();
     if (!userText) return;
+
+    // State ko true karo aur input box ko temporary disable kar do
+    isSifraThinking = true;
+    inputEl.disabled = true;
+    if(inputEl.placeholder) inputEl.placeholder = "Sifra is typing... 💬";
 
     addChatMessage(userText, 'user');
     inputEl.value = '';
@@ -1318,12 +1329,13 @@ async function sendToAI() {
     history.innerHTML += `<div id="${loadingId}" class="chat-message ai-message"><div class="bubble"><span id="text-${loadingId}">Thinking... 🤔</span></div></div>`;
     history.scrollTop = history.scrollHeight;
 
+    // ⏱️ TIMER FIX: Ab 5 second ke bajay full 12 second (12000ms) baad hi neend wala message dikhega
     const wakeUpTimer = setTimeout(() => {
         const loadingText = document.getElementById(`text-${loadingId}`);
         if (loadingText) {
-            loadingText.innerHTML = "Sifra gehri neend me thi, abhi jaag rahi hai... 😴✨<br><small style='font-size:0.8rem; color:gray;'>(Pehli baar me 30 seconds lag sakte hain)</small>";
+            loadingText.innerHTML = "Sifra gehri neend me thi, abhi jaag rahi hai... 😴✨<br><small style='font-size:0.8rem; color:gray;'>(Pehli baar me thoda waqt lag sakta hai)</small>";
         }
-    }, 5000); 
+    }, 12000); 
 
     try {
         const response = await fetch('https://learningsmartbackend.onrender.com/api/chat', {
@@ -1341,17 +1353,19 @@ async function sendToAI() {
             addChatMessage(data.reply, 'ai');
             speakText(data.reply); 
         } else {
-            // ⭐ Jhol Fix: Agar keys thaki hain toh asli error message dikhao
-            let errorText = data.error || "Server Error";
-            addChatMessage(`🚨 **Sifra System Note:** ${errorText}`, 'ai');
-
-            speakText("Keys are tired.");
+            // Backend se aane wala sweet fallback message dikhayega bina bacchon ko disturb kiye
+            addChatMessage(data.reply || "Arey bacchon! Sifra ko thodi si neend aa rahi hai, chalo 1 minute ka break lekar fir se baaten karte hain! 😊", 'ai');
         }
     } catch (error) {
         clearTimeout(wakeUpTimer); 
         if(document.getElementById(loadingId)) document.getElementById(loadingId).remove(); 
-        addChatMessage("🚨 **Network Error:** Server se connect nahi ho paa raha hai. Internet check karein!", 'ai');
-
+        addChatMessage("🚨 **Network Error:** Server se connect nahi ho paa raha hai. Internet check karne ko kahein!", 'ai');
+    } finally {
+        // 🔥 ALL CLEAR: Request poori hote hi lock khol do taaki naya message bheja ja sake
+        isSifraThinking = false;
+        inputEl.disabled = false;
+        inputEl.placeholder = "Ask Sifra...";
+        inputEl.focus(); // Dubara typing ke liye focus active
     }
 }
 
