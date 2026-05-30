@@ -140,9 +140,47 @@
 <body>
 
 <div id="app">
+    
+        <div id="onboarding-screen" class="screen" style="background: #e1f5fe; z-index: 5000;">
+        <h1 style="font-size: clamp(2rem, 8vw, 3rem); margin-top: 20px;">Welcome! 🎈</h1>
+        <p style="font-size: 1.2rem; color: gray; margin-bottom: 20px; text-align: center;">Ek choti si setting, fir dher saara khel! 🎮</p>
+        
+        <div class="save-score-box" style="border-color:var(--secondary); background: white; width: 100%; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+            <div style="text-align: left; margin-bottom: 15px;">
+                <label style="font-weight: bold; color: var(--text); font-size: 1.1rem;">Tumhara Pyara Naam? 👧👦</label>
+                <input type="text" id="ob-name" class="name-input" placeholder="Jaise: Jiya" maxlength="15" style="border-color:var(--secondary); margin-top: 5px;">
+            </div>
+
+            <div style="text-align: left; margin-bottom: 15px;">
+                <label style="font-weight: bold; color: var(--text); font-size: 1.1rem;">Kaunsi Class me ho? 📚</label>
+                <select id="ob-class" class="name-input" style="border-color:var(--secondary); margin-top: 5px; background: white;">
+                    <option value="" disabled selected>Class select karo...</option>
+                    <option value="Nursery">Nursery</option>
+                    <option value="LKG">LKG</option>
+                    <option value="UKG">UKG</option>
+                    <option value="Class 1">Class 1</option>
+                    <option value="Class 2">Class 2</option>
+                    <option value="Class 3">Class 3</option>
+                    <option value="Class 4">Class 4</option>
+                    <option value="Class 5">Class 5</option>
+                    <option value="Class 6">Class 6</option>
+                    <option value="Class 7">Class 7</option>
+                    <option value="Class 8">Class 8</option>
+                </select>
+            </div>
+
+            <div style="text-align: left; margin-bottom: 20px;">
+                <label style="font-weight: bold; color: var(--text); font-size: 1.1rem;">Kahan rahte ho? 🌍</label>
+                <input type="text" id="ob-location" class="name-input" placeholder="Jaise: Mirzapur, UP" maxlength="30" style="border-color:var(--secondary); margin-top: 5px;">
+            </div>
+
+            <button class="btn primary" style="width: 100%; font-size: 1.3rem; margin: 0; box-shadow: 0 5px 0 rgba(0,0,0,0.2);" onclick="saveJaduiProfile()">Let's Play! 🚀</button>
+            <div id="ob-msg" style="margin-top: 10px; font-weight: bold; color: var(--danger);"></div>
+        </div>
+    </div>
 
     <div id="home" class="screen active">
-        <h1>🎉 Pari ❤️ Jiya Learning App 📚</h1>
+        <h1 id="welcome-title">🎉 Pari ❤️ Jiya Learning App 📚</h1>
         <p style="font-size: clamp(1rem, 3.5vw, 1.2rem); margin-bottom: 15px; color: gray;">Let's learn and play!</p>
 
         
@@ -185,6 +223,8 @@
         <button class="btn primary" onclick="startQuiz()">📝 Start 30 Questions Quiz</button>
         <button class="btn" style="background:#ff9f43;" onclick="startGameMode()">🎮 Play Game Mode</button>
         
+                <button class="btn" style="background:#ff4757; color:white; font-weight: bold; box-shadow: 0 0 15px rgba(255, 71, 87, 0.6);" onclick="openGlobalLeaderboard()">🌍 Live Global Leaderboard</button>
+
         <div style="display:flex; width:100%; gap:10px;">
             <button class="btn accent" style="flex:1;" onclick="openCalculator()">🧮 Calc</button>
             <button class="btn" style="background:var(--color-gold); flex:1; color:white;" onclick="openLeaderboard()">🏆 Leaders</button>
@@ -217,7 +257,40 @@
     <div id="quiz" class="screen"><div class="top-bar"><button class="btn back-btn" onclick="goHome()">🔙</button><h2 style="margin:0;">Quiz Time! 🧠</h2><div style="width: 60px; font-size: clamp(1rem, 4vw, 1.2rem); text-align:center;" id="question-counter">1/30</div></div><div class="progress-bar"><div class="progress-fill" id="quiz-progress"></div></div><div class="question-box" id="quiz-question">2 + 2 = ?</div><button class="btn yellow" style="font-size:clamp(1rem, 4vw, 1.2rem); padding: 10px; width:auto; margin: -10px auto 20px auto;" onclick="repeatQuestionVoice()">🔊 Listen Again</button><div class="options-grid" id="quiz-options"></div></div>
     <div id="results" class="screen"><h1>🏆 Quiz Finished! 🎉</h1><div class="result-stat" style="color: var(--success); font-size: clamp(1.2rem, 5vw, 1.5rem); font-weight: bold;">✅ Correct: <span id="res-correct">0</span></div><div class="result-stat" style="color: var(--danger); font-size: clamp(1.2rem, 5vw, 1.5rem); font-weight: bold; margin-bottom: 10px;">❌ Wrong: <span id="res-wrong">0</span></div><div class="save-score-box" id="save-score-box"><h3>Save your Score!</h3><input type="text" id="player-name" class="name-input" placeholder="Enter your name" maxlength="15"><button class="btn accent" onclick="saveQuizScore()">💾 Save to Leaderboard</button></div><h3 style="margin-top: 20px; font-size:clamp(1.2rem, 4vw, 1.5rem);" id="mistakes-title">Let's review mistakes 📘:</h3><div class="mistakes-list" id="mistakes-list" style="width: 100%; text-align: left;"></div><button class="btn primary" style="margin-top: 20px;" onclick="startQuiz()">🔄 Start New Quiz</button><button class="btn yellow" onclick="goHome()">🏠 Go Home</button></div>
     <div id="game-mode" class="screen"><div class="top-bar"><button class="btn back-btn" onclick="goHome()">🔙</button><h2 style="margin:0;">Game Mode 🎮</h2><div style="width: 40px;"></div></div><div class="game-stats" style="display: flex; justify-content: space-between; width: 100%; font-size: clamp(1.2rem, 5vw, 1.5rem); margin-bottom: 15px; font-weight: bold;"><div class="lives" id="game-lives">❤️❤️❤️</div><div class="score">⭐ <span id="game-score">0</span></div></div><div class="question-box" id="game-question">2 + 2 = ?</div><button class="btn yellow" style="font-size:clamp(1rem, 4vw, 1.2rem); padding: 10px; width:auto; margin: -10px auto 20px auto;" onclick="repeatQuestionVoice()">🔊 Listen Again</button><div class="options-grid" id="game-options"></div></div>
-    <div id="game-over" class="screen"><h1>Game Over! 🕹️</h1><h2 style="font-size: clamp(3rem, 10vw, 5rem); margin: 20px 0;">⭐ <span id="final-game-score">0</span></h2><p style="font-size: clamp(1.2rem, 4vw, 1.5rem); margin-bottom: 20px;">Great trying! Keep practicing.</p><button class="btn primary" onclick="startGameMode()">🔄 Play Again</button><button class="btn yellow" onclick="goHome()">🏠 Go Home</button></div>
+    
+        <div id="game-over" class="screen">
+        <h1>Game Over! 🕹️</h1>
+        <h2 style="font-size: clamp(3rem, 10vw, 5rem); margin: 20px 0;">⭐ <span id="final-game-score">0</span></h2>
+        <p style="font-size: clamp(1.2rem, 4vw, 1.5rem); margin-bottom: 10px;">Great trying! Keep practicing.</p>
+        
+        <div id="auto-save-msg" style="font-weight:bold; font-size:1.2rem; color:var(--success); margin-bottom: 25px; min-height: 30px; text-align: center;"></div>
+
+        <button class="btn primary" onclick="startGameMode()">🔄 Play Again</button>
+        <button class="btn yellow" onclick="goHome()">🏠 Go Home</button>
+    </div>
+    
+        <div id="global-leaderboard-screen" class="screen">
+        <div class="top-bar">
+            <button class="btn back-btn" onclick="goHome()">🔙</button>
+            <h2 style="margin:0; color:#ff4757;">Global Board 🌍</h2>
+            <div style="width: 40px;"></div>
+        </div>
+        
+        <div style="width:100%; overflow-x:auto;">
+            <table class="leaderboard-table" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                <thead>
+                    <tr>
+                        <th style="text-align: left; padding: 10px; border-bottom: 2px solid #eee;">Rank</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 2px solid #eee;">Name</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 2px solid #eee;">Score</th>
+                    </tr>
+                </thead>
+                <tbody id="global-leaderboard-body">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
     <div id="leaderboard" class="screen"><div class="top-bar"><button class="btn back-btn" onclick="goHome()">🔙</button><h2 style="margin:0;">Leaderboard 🏆</h2><div style="width: 40px;"></div></div><div style="width:100%; overflow-x:auto;"><table class="leaderboard-table" id="leaderboard-table"><thead><tr><th>Rank</th><th>Name</th><th>Score</th><th>Date</th></tr></thead><tbody id="leaderboard-body"></tbody></table></div><button class="btn danger" style="background: var(--danger); margin-top: 30px;" onclick="clearLeaderboard()">🗑️ Clear Board</button></div>
 
     <div id="calculator" class="screen">
@@ -331,6 +404,61 @@
         return charsToReplace[tag] || tag;
     });
 }
+
+        // ==========================================
+    // ⭐ JADUI PROFILE ENGINE (ONBOARDING) ⭐
+    // ==========================================
+    let userProfile = JSON.parse(localStorage.getItem('pariProfile') || 'null');
+
+    // App khulte hi check karo ki bacha naya hai ya purana
+    window.addEventListener('load', () => {
+        if (!userProfile) {
+            // Naya bacha hai, usko onboarding dikhao
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('onboarding-screen').classList.add('active');
+        } else {
+            // Purana bacha hai, uska naam Home screen par daalo
+            updateWelcomeScreen();
+        }
+    });
+
+    function updateWelcomeScreen() {
+        if (userProfile && userProfile.name) {
+            document.getElementById('welcome-title').innerHTML = `🎉 Welcome, ${userProfile.name}! 🚀`;
+        }
+    }
+
+    function saveJaduiProfile() {
+        const name = document.getElementById('ob-name').value.trim();
+        const stuClass = document.getElementById('ob-class').value;
+        const location = document.getElementById('ob-location').value.trim();
+        const msg = document.getElementById('ob-msg');
+
+        if (!name || !stuClass || !location) {
+            msg.innerText = "Please sab kuch theek se bharo! 🧐";
+            return;
+        }
+
+        // 5-Digit Unique Secret UID banayenge
+        const secretUid = Math.floor(10000 + Math.random() * 90000);
+
+        userProfile = {
+            name: name,
+            class: stuClass,
+            location: location,
+            uid: "KID" + secretUid // Example: KID48291
+        };
+
+        // Phone ke andar hamesha ke liye save kar diya
+        localStorage.setItem('pariProfile', JSON.stringify(userProfile));
+
+        // Screen change karke home pe bhej do
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('home').classList.add('active');
+        
+        updateWelcomeScreen();
+        speakText(`Hello ${name}, welcome to the app!`);
+    }
 
     // ==========================================
     // ⭐ JADUI SLATE LOGIC (100% Safe JS) ⭐
@@ -736,7 +864,7 @@
         goHome();
     }
 
-    // ⭐ ONLINE DYNAMIC GENERATOR + 10-SEC OFFLINE FALLBACK HYBRID ENGINE ⭐
+        // ⭐ ONLINE DYNAMIC GENERATOR + 10-SEC OFFLINE FALLBACK HYBRID ENGINE ⭐
     async function loadStorySentence() {
         const box = document.getElementById('read-sentence-box');
         
@@ -751,25 +879,30 @@
             if (!apiResponded) {
                 apiResponded = true;
                 console.log("10 seconds over! Switching to local paragraph pool...");
-                // readingStories wale array mein se koi bhi ek random sentence pick karega
                 const fallbackSentence = readingStories[Math.floor(Math.random() * readingStories.length)];
                 renderSentenceWords(fallbackSentence);
             }
         }, 10000);
 
         try {
-            // 2. Cloud backend se random text mangwa rahe hain
-            const response = await fetch('https://learningsmartbackend.onrender.com/api/generate-text');
+            // ⭐ NAYA JHOL: Sifra ko bache ki class bhejo taaki waisa hi sentence aaye!
+            let childProfile = JSON.parse(localStorage.getItem('pariProfile') || 'null');
+
+            const response = await fetch('https://learningsmartbackend.onrender.com/api/generate-text', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ profile: childProfile }) 
+            });
+
             const data = await response.json();
 
             // Agar 10 second se pehle tezi se response aa gaya
             if (!apiResponded && response.ok && data.text) {
                 apiResponded = true;
-                clearTimeout(fallbackTimeout); // Timer ko roko
-                renderSentenceWords(data.text); // AI wala sentence screen par lagao
+                clearTimeout(fallbackTimeout); 
+                renderSentenceWords(data.text); 
             }
         } catch (error) {
-            // Agar internet band ho ya koi network error aaye, toh bina atke local pool chalega
             if (!apiResponded) {
                 apiResponded = true;
                 clearTimeout(fallbackTimeout);
@@ -1257,7 +1390,31 @@
     function startGameMode() { gameLives = 3; gameScore = 0; updateGameStats(); showScreen('game-mode'); nextGameQuestion(); }
     function updateGameStats() { document.getElementById('game-lives').innerText = '❤️'.repeat(gameLives); document.getElementById('game-score').innerText = gameScore; }
     function nextGameQuestion() { currentGameQ = generateRandomQuestion(); const qBox = document.getElementById('game-question'); qBox.innerHTML = currentGameQ.question; qBox.classList.remove('bounce', 'shake'); const optsContainer = document.getElementById('game-options'); optsContainer.innerHTML = ''; optsContainer.style.gridTemplateColumns = currentGameQ.type==='compare'?'repeat(3, 1fr)':'repeat(2, 1fr)'; currentGameQ.options.forEach(opt => { const btn = document.createElement('button'); btn.className = 'btn option-btn secondary'; btn.innerText = currentGameQ.type==='tf'?(opt==='True'?'✅ True':'❌ False'):opt; btn.onclick = () => { document.querySelectorAll('#game-options .option-btn').forEach(b => b.disabled=true); let isC = (opt == currentGameQ.answer); playSound(isC); if(isC) { btn.style.background='var(--success)'; gameScore++; updateGameStats(); qBox.classList.add('bounce'); setTimeout(nextGameQuestion, 1200); } else { btn.style.background='var(--danger)'; gameLives--; updateGameStats(); qBox.classList.add('shake'); setTimeout(gameLives<=0?endGameMode:nextGameQuestion, 1500); } }; optsContainer.appendChild(btn); }); lastSpokenText = parseQuestionForVoice(currentGameQ); speakText(lastSpokenText); }
-    function endGameMode() { document.getElementById('final-game-score').innerText = gameScore; showScreen('game-over'); }
+    
+        function endGameMode() { 
+        document.getElementById('final-game-score').innerText = gameScore; 
+        showScreen('game-over'); 
+
+        // ⭐ AUTO-SAVE ENGINE ⭐
+        let currentHighScore = parseInt(localStorage.getItem('pariGlobalHighScore') || '0');
+        const msgBox = document.getElementById('auto-save-msg');
+        
+        // Check karo ki kya Jiya ne apna purana record toda hai?
+        if (gameScore > currentHighScore && gameScore > 0) {
+            localStorage.setItem('pariGlobalHighScore', gameScore); // Phone me save kiya
+            msgBox.innerText = "Wow! New High Score! 🚀 Saving... ☁️";
+            msgBox.style.color = "var(--text)";
+            
+            // Firebase ko chupchaap update bhejo
+            if(window.autoSaveScoreDB) {
+                window.autoSaveScoreDB(gameScore);
+            }
+        } else {
+            // Agar score kam hai, toh motivate karo
+            msgBox.innerText = `Tera High Score ${currentHighScore} ⭐ hai! Beat it!`;
+            msgBox.style.color = "gray";
+        }
+    }
 
         // ⭐ SMART CALCULATOR LOGIC (Live Preview, Brackets, %, Backspace) ⭐
     let calcCurrent = '0'; 
@@ -1409,18 +1566,17 @@
         goHome(); 
     }
 
-    async function sendToAI() {
+        async function sendToAI() {
         if (isSifraThinking) return; 
 
         const inputEl = document.getElementById('ai-input-text');
         const userText = inputEl.value.trim();
         if (!userText) return;
 
-                // ⏳ JHOL FIX 3: Text box khula rahega par Send button Grey (Black & White) aur Lock ho jayega
+        // ⏳ Text box khula rahega par Send button Grey aur Lock ho jayega
         isSifraThinking = true;
         const sendBtn = document.getElementById('send-btn');
         sendBtn.disabled = true; 
-        // 🚀 Emoji ko grey karne ke liye CSS Filter ka use
         sendBtn.style.filter = 'grayscale(100%) opacity(0.5)'; 
         sendBtn.style.cursor = 'not-allowed';
 
@@ -1448,11 +1604,18 @@
             messageWithMemory = `Context of our conversation:\n${sifraHistory.join("\n")}\nNew query: ${userText}`;
         }
 
+        // ⭐ NAYA JHOL: Bache ki profile nikalo
+        let childProfile = JSON.parse(localStorage.getItem('pariProfile') || 'null');
+
         try {
             const response = await fetch('https://learningsmartbackend.onrender.com/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: messageWithMemory }) 
+                // ⭐ NAYA JHOL: Message ke sath profile ka lifafa bhi bhejo!
+                body: JSON.stringify({ 
+                    message: messageWithMemory,
+                    profile: childProfile 
+                }) 
             });
 
             const data = await response.json();
@@ -1478,17 +1641,15 @@
             if(document.getElementById(loadingId)) document.getElementById(loadingId).remove(); 
             addChatMessage("🚨 **Network Error:** Server se connect nahi ho paa raha hai. Internet check karne ko kahein!", 'ai');
         } finally {
-            // 🔥 JHOL FIX 3 (Unlock): Reply aate hi Filter hatao aur Rocket ko wapas colorful banao
+            // Unlock karo button
             isSifraThinking = false;
             sendBtn.disabled = false;
-            // 🚀 Filter 'none' karte hi original rang wapas aa jayega
             sendBtn.style.filter = 'none'; 
             sendBtn.style.cursor = 'pointer';
 
             inputEl.placeholder = "Ask Sifra...";
             inputEl.focus(); 
         }
-
     }
 
     let recognition;
@@ -1588,6 +1749,107 @@
     window.addEventListener('online', updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
     window.addEventListener('load', updateOnlineStatus);
+
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+    import { getDatabase, ref, push, set, onValue, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+
+    // 🗝️ Tumhari Tijori ki Chabi
+    const firebaseConfig = {
+        apiKey: "AIzaSyCKx1w7kH0rW8xtzW_u86-gWjxjhsVt6OY",
+        authDomain: "learning-smartx.firebaseapp.com",
+        projectId: "learning-smartx",
+        storageBucket: "learning-smartx.firebasestorage.app",
+        messagingSenderId: "173997090552",
+        appId: "1:173997090552:web:b1873996f39688185f7d0d",
+        databaseURL: "https://learning-smartx-default-rtdb.asia-southeast1.firebasedatabase.app/" 
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // ⭐ 1. Auto Data Bhejna (Stealth Save)
+    window.autoSaveScoreDB = function(newScore) {
+        let profile = JSON.parse(localStorage.getItem('pariProfile'));
+        
+        // Agar bache ne form nahi bhara hai (Error safety)
+        if(!profile || !profile.uid) return; 
+        
+        const msgBox = document.getElementById('auto-save-msg');
+        
+        // 🔥 JHOL FIX: UID ke naam se file banegi, taaki Jiya ka naam 10 baar na aaye (Overwrite hoga)
+        const userRef = ref(db, 'globalScores/' + profile.uid); 
+        
+        set(userRef, {
+            name: profile.name,
+            score: newScore,
+            location: profile.location || '',
+            timestamp: Date.now()
+        }).then(() => {
+            msgBox.innerText = "High Score Saved to Global Board! 🌍👑";
+            msgBox.style.color = "var(--success)";
+        }).catch((error) => {
+            msgBox.innerText = "Score not saved. Internet check karo! ❌";
+            msgBox.style.color = "var(--danger)";
+            console.error(error);
+        });
+    };
+
+    // ⭐ 2. Leaderboard Kholna (Refresh button hatane ke baad)
+    window.openGlobalLeaderboard = function() {
+        showScreen('global-leaderboard-screen'); 
+        window.fetchGlobalLeaderboard(); 
+    };
+
+    // ⭐ 3. Data Mangwana (Fetch karna)
+    window.fetchGlobalLeaderboard = function() {
+        const tbody = document.getElementById('global-leaderboard-body');
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 20px;">Loading Stars... ⏳</td></tr>';
+        
+        const topScoresQuery = query(ref(db, 'globalScores'), orderByChild('score'), limitToLast(50));
+        
+        onValue(topScoresQuery, (snapshot) => {
+            tbody.innerHTML = '';
+            let scores = [];
+            
+            snapshot.forEach((childSnapshot) => {
+                scores.push(childSnapshot.val());
+            });
+            
+            scores.reverse(); // Highest score sabse upar
+            
+            if(scores.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 20px;">Abhi koi score nahi hai. First bano! 🌟</td></tr>';
+                return;
+            }
+            
+            scores.forEach((data, index) => {
+                let rankDisplay = `#${index + 1}`;
+                if (index === 0) rankDisplay = '👑 1st';
+                else if (index === 1) rankDisplay = '🥈 2nd';
+                else if (index === 2) rankDisplay = '🥉 3rd';
+                
+                // Humne location ko bhi thoda sa dikhane ka jugaad kar diya hai
+                let nameDisplay = data.name;
+                if (data.location) {
+                    nameDisplay += ` <span style="font-size:0.8rem; color:gray;">(${data.location})</span>`;
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="font-weight:bold; color:var(--accent2); padding: 12px; border-bottom: 1px solid #eee;">${rankDisplay}</td>
+                        <td style="font-weight:bold; color:var(--text); padding: 12px; border-bottom: 1px solid #eee;">${nameDisplay}</td>
+                        <td style="color:var(--color-gold); font-size:1.3rem; font-weight:bold; padding: 12px; border-bottom: 1px solid #eee;">${data.score} ⭐</td>
+                    </tr>
+                `;
+            });
+        }, (error) => {
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--danger); padding: 20px;">Error loading data. 📶</td></tr>';
+            console.error(error);
+        });
+    };
 
 </script>
 </body>
