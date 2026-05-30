@@ -828,23 +828,69 @@
             readRecog.start();
         }
     }
+        // 🧠 FUZZY MATCHING ENGINE: 2 words kitne % match karte hain, ye calculate karega!
+    function getSimilarity(word1, word2) {
+        if (word1 === word2) return 1.0;
+        const len1 = word1.length, len2 = word2.length;
+        const maxLen = Math.max(len1, len2);
+        if (maxLen === 0) return 1.0;
+        
+        let matrix = Array(len2 + 1).fill(null).map(() => Array(len1 + 1).fill(null));
+        for (let i = 0; i <= len1; i++) matrix[0][i] = i;
+        for (let j = 0; j <= len2; j++) matrix[j][0] = j;
+        
+        for (let j = 1; j <= len2; j++) {
+            for (let i = 1; i <= len1; i++) {
+                const indicator = word1[i - 1] === word2[j - 1] ? 0 : 1;
+                matrix[j][i] = Math.min(
+                    matrix[j][i - 1] + 1, 
+                    matrix[j - 1][i] + 1, 
+                    matrix[j - 1][i - 1] + indicator 
+                );
+            }
+        }
+        return (maxLen - matrix[len2][len1]) / maxLen; // 0.0 se 1.0 ke beech score dega
+    }
 
-    // ⭐ REAL-TIME RED/GREEN LOGIC (UPDATED SMART CATCH-UP) ⭐
+    // 🧠 FUZZY MATCHING ENGINE: 2 words kitne % match karte hain, ye calculate karega
+    function getSimilarity(word1, word2) {
+        if (word1 === word2) return 1.0;
+        const len1 = word1.length, len2 = word2.length;
+        const maxLen = Math.max(len1, len2);
+        if (maxLen === 0) return 1.0;
+        
+        let matrix = Array(len2 + 1).fill(null).map(() => Array(len1 + 1).fill(null));
+        for (let i = 0; i <= len1; i++) matrix[0][i] = i;
+        for (let j = 0; j <= len2; j++) matrix[j][0] = j;
+        
+        for (let j = 1; j <= len2; j++) {
+            for (let i = 1; i <= len1; i++) {
+                const indicator = word1[i - 1] === word2[j - 1] ? 0 : 1;
+                matrix[j][i] = Math.min(
+                    matrix[j][i - 1] + 1, 
+                    matrix[j - 1][i] + 1, 
+                    matrix[j - 1][i - 1] + indicator 
+                );
+            }
+        }
+        return (maxLen - matrix[len2][len1]) / maxLen; // 0.0 se 1.0 ke beech score dega
+    }
+
+    // ⭐ REAL-TIME SMART LOGIC (WITH AUTO-SKIP BLUE HIGHLIGHT & RETRY GREEN LOGIC) ⭐
     function checkAdvancedReadingProgress(spokenText) {
         let cleanSpoken = spokenText.toLowerCase().replace(/[.,!?]/g, '').trim().split(/\s+/);
         let cleanTargets = currentWords.map(w => w.toLowerCase().replace(/[.,!?]/g, ''));
         
-        // Step 1: Pehle saare unmatched words ko normal karo (taaki purana red hat jaye)
+        // Step 1: Purana rang hatao (jo matched ya skipped nahi hain)
         for(let i=0; i<cleanTargets.length; i++) {
             let span = document.getElementById('read-word-' + i);
-            if (span.dataset.status !== 'matched') {
+            if (span.dataset.status !== 'matched' && span.dataset.status !== 'skipped') {
                  span.style.color = 'var(--text)';
             }
         }
 
-        // Step 2: Smart Match Logic (Baccha chahe shuru se padhe, ya sirf chhuta hua word padhe)
-        let sIdx = 0; // Spoken words ka index
-        let tIdx = 0; // Target words ka index
+        let sIdx = 0; // Spoken words pointer
+        let tIdx = 0; // Target words pointer
 
         while (tIdx < cleanTargets.length && sIdx < cleanSpoken.length) {
             let sWord = cleanSpoken[sIdx];
@@ -855,38 +901,85 @@
                 sIdx++; continue;
             }
 
+            // 🎯 JHOL FIX 1: Sirf green (matched) words ko bypass karo.
+            // Blue (skipped) words ab bypass nahi honge, taaki unhe dubara bolne par sahi kiya ja sake!
             if (span.dataset.status === 'matched') {
-                // Agar word pehle se green hai, check karo kya bache ne ise dobara padha hai
-                if (sWord === tWord) {
-                    sIdx++; // Haan padha hai, toh spoken word ko aage badhao
+                if (sWord === tWord || getSimilarity(sWord, tWord) >= 0.55) {
+                    sIdx++; 
                 }
-                tIdx++; // Target hamesha aage badhega
+                tIdx++; 
+                continue;
+            }
+
+            // 🎯 Padosi Pass (Auto-Skip Engine)
+            let nextTargetMatchFound = false;
+            let skipCount = 0;
+            
+            for(let lookAhead = 1; lookAhead <= 2; lookAhead++) {
+                 if(tIdx + lookAhead < cleanTargets.length) {
+                     let nextTarget = cleanTargets[tIdx + lookAhead];
+                     if(sWord === nextTarget || getSimilarity(sWord, nextTarget) >= 0.70) {
+                         nextTargetMatchFound = true;
+                         skipCount = lookAhead;
+                         break;
+                     }
+                 }
+            }
+
+            if(nextTargetMatchFound) {
+                 // Jo words beech mein CHHOOT GAYE hain unhe BLUE rang do
+                 for(let k = 0; k < skipCount; k++) {
+                     let skipSpan = document.getElementById('read-word-' + (tIdx + k));
+                     if(skipSpan && skipSpan.dataset.status !== 'matched') {
+                         skipSpan.style.color = '#1e90ff'; // Dodger Blue 🔵
+                         skipSpan.dataset.status = 'skipped'; 
+                     }
+                 }
+                 // Jahan bacha pounch gaya hai use GREEN rang do
+                 let matchSpan = document.getElementById('read-word-' + (tIdx + skipCount));
+                 if(matchSpan) {
+                     matchSpan.style.color = 'var(--success)';
+                     matchSpan.dataset.status = 'matched';
+                 }
+                 
+                 tIdx += skipCount + 1; 
+                 sIdx++; 
+                 continue; 
+            }
+
+            // 🎯 NORMAL MATCHING (Similarity check 55% for kids)
+            let isWordMatched = (sWord === tWord) || 
+                                (getSimilarity(sWord, tWord) >= 0.55) || 
+                                (tWord.includes(sWord) && sWord.length > 2) || 
+                                (sWord.includes(tWord) && tWord.length > 2);
+
+            if (isWordMatched) {
+                // 🔥 RETRY SUCCESS: Agar bacha blue word sahi bol deta hai, toh wo GREEN ho jayega!
+                span.style.color = 'var(--success)';
+                span.dataset.status = 'matched';
+                sIdx++;
+                tIdx++;
             } else {
-                // Word green nahi hai, isko check karna zaroori hai
-                if (sWord === tWord) {
-                    // Sahi padh liya! 🟢
-                    span.style.color = 'var(--success)';
-                    span.dataset.status = 'matched';
-                    sIdx++;
-                    tIdx++;
-                } else {
-                    // Galat padha! 🔴
+                // Galat padha! 🔴
+                // 🎯 JHOL FIX 2: Agar word pehle se blue (skipped) tha, toh use red mat karo, blue hi rehne do
+                if (span.dataset.status !== 'skipped') {
                     span.style.color = 'var(--danger)';
-                    sIdx++; // Spoken word skip karo par target wahi rakho
                 }
+                sIdx++; 
             }
         }
 
-        // Step 3: Check karo kya saare words green (matched) ho gaye hain?
+        // Step 3: Check karo kya saare words khatam ho gaye hain (ya toh matched ya skipped)?
         let allMatched = true;
         for(let i=0; i<cleanTargets.length; i++) {
-            if (document.getElementById('read-word-' + i).dataset.status !== 'matched') {
+            let status = document.getElementById('read-word-' + i).dataset.status;
+            if (status !== 'matched' && status !== 'skipped') {
                 allMatched = false;
                 break;
             }
         }
 
-        // Step 4: Agar sab sahi ho gaya toh agla sentence
+        // Step 4: Agar sab khatam ho gaya toh agla sentence lao
         if (allMatched) {
             if(isReadListening && readRecog) readRecog.stop();
             document.getElementById('read-status').innerText = "Superb! 🎉⭐⭐⭐";
@@ -894,7 +987,6 @@
             playSound(true); 
             speakBilingual('Excellent reading!', 'बहुत बढ़िया!');
             
-            // 2.5 second baad agla sentence
             setTimeout(() => {
                 currentStoryIdx++;
                 if (currentStoryIdx >= readingStories.length) {
@@ -905,10 +997,8 @@
             }, 2500);
         }
     }
-    
 
 </script>
-
 
             <div id="offline-screen" style="opacity:0; visibility:hidden; pointer-events:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#ffffff; z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px; transition: opacity 0.3s ease;">
         
